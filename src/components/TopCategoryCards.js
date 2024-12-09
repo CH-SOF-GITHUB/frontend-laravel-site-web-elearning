@@ -1,12 +1,29 @@
-import React from 'react';
-import '../css/TopCategoryCards.css';
-import TopCategoryCardItem from './TopCategoryCardItem';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
+import React, { useEffect, useState } from 'react'
+import '../css/TopCategoryCards.css'
+import TopCategoryCardItem from './TopCategoryCardItem'
+import Carousel from 'react-multi-carousel'
+import 'react-multi-carousel/lib/styles.css'
+import { fetchCategories } from '../services/categoriesservice'
 
+function TopCategoryCards (props) {
+  // initialize categories state
+  const [categories, setCategories] = useState([])
 
+  // fetch dat categories from services
+  const fetchcatgs = async () => {
+    try {
+      const res = await fetchCategories()
+      setCategories(res.data)
+      console.log(res)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
-function TopCategoryCards(props) {
+  //manage state
+  useEffect(() => {
+    fetchcatgs()
+  }, [])
 
   const responsive = {
     desktop: {
@@ -24,7 +41,7 @@ function TopCategoryCards(props) {
       items: 1.5,
       slidesToSlide: 1 // optional, default to 1.
     }
-  };
+  }
 
   // For Custmizing Dots Of Carousel
   const CustomDot = ({ onClick, ...rest }) => {
@@ -33,19 +50,19 @@ function TopCategoryCards(props) {
       index,
       active,
       carouselState: { currentSlide, deviceType }
-    } = rest;
+    } = rest
     //const carouselItems = [CarouselItem1, CaourselItem2, CarouselItem3];
     // onMove means if dragging or swiping in progress.
     // active is provided by this lib for checking if the item is active or not.
     return (
       <button
-        className={active ? "active" : "inactive"}
+        className={active ? 'active' : 'inactive'}
         onClick={() => onClick()}
       >
         {/* {React.Children.toArray(carouselItems)[index]} */}
       </button>
-    );
-  };
+    )
+  }
 
   // const arrowStyle = {
   //   background: "transparent",
@@ -64,9 +81,8 @@ function TopCategoryCards(props) {
   //   </button>
   // );
 
-
   return (
-    <div className="cards">
+    <div className='cards'>
       <h1>Top Categories</h1>
       <br></br>
       <Carousel
@@ -76,57 +92,33 @@ function TopCategoryCards(props) {
         responsive={responsive}
         ssr={true} // means to render carousel on server-side.
         infinite={true}
-        autoPlay={props.deviceType !== "mobile" ? true : false}
+        autoPlay={props.deviceType !== 'mobile' ? true : false}
         autoPlaySpeed={100000}
         keyBoardControl={true}
-        customTransition="all .5"
+        customTransition='all .5'
         transitionDuration={500}
-        containerClass="carousel-container"
-        removeArrowOnDeviceType={["tablet", "mobile"]}
+        containerClass='carousel-container'
+        removeArrowOnDeviceType={['tablet', 'mobile']}
         deviceType={props.deviceType}
-        dotListClass="custom-dot-list-style"
-        itemClass="carousel-item-padding-40-px"
+        dotListClass='custom-dot-list-style'
+        itemClass='carousel-item-padding-40-px'
 
-      // showDots customDot={<CustomDot />}
+        // showDots customDot={<CustomDot />}
       >
-
-        <div><TopCategoryCardItem
-          src='images/cat1.png'
-          text='Frontend'
-          label='Adventure'
-          path='/services'
-        /></div>
-        <div><TopCategoryCardItem
-          src='images/cat2.png'
-          text='Programming'
-          label='Luxury'
-          path='/services'
-        /></div>
-        <div><TopCategoryCardItem
-          src='images/cat3.png'
-          text='Cloud Computing'
-          label='Mystery'
-          path='/services'
-        /></div>
-        <div><TopCategoryCardItem
-          src='images/cat4.png'
-          text='Backend'
-          label='Adventure'
-          path='/products'
-        /></div>
-        <div>
-          <TopCategoryCardItem
-            src='images/cat5.png'
-            text='AI/ML'
-            label=''
-            path='/sign-up'
-          />
-        </div>
-
+        {categories.map((category, index) => (
+          <div>
+            <TopCategoryCardItem
+              key={index}
+              label={category.category_name}
+              description={category.category_description}
+              path={`/categories/${category.id}`}
+            />
+          </div>
+        ))}
       </Carousel>
       <br></br>
     </div>
-  );
+  )
 }
 
-export default TopCategoryCards;
+export default TopCategoryCards

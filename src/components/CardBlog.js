@@ -1,9 +1,7 @@
-import React from 'react'
-import Card from 'react-bootstrap/Card'
-import { Link } from 'react-router-dom'
-import { MdDescription } from "react-icons/md";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-function CardItem (props) {
+function CardBlog(props) {
   return (
     <>
       <li className='cards__item'>
@@ -12,16 +10,16 @@ function CardItem (props) {
             <img
               className='cards__item__img'
               alt='Travel Image'
-              src='images/logocategorie.jpg'
+              src={props.src}
             />
           </figure>
           <div className='cards__item__info'>
-            <h6 className='cards__item__text'><MdDescription /> : {props.description}</h6>
+            <h5 className='cards__item__text'>{props.text}</h5>
           </div>
         </Link>
       </li>
     </>
-  )
+  );
 }
 
-export default CardItem
+export default CardBlog;

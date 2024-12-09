@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { GiDuration } from "react-icons/gi";
+import { MdOutlinePriceChange } from "react-icons/md";
 
 function CardItem(props) {
   return (
@@ -10,11 +12,17 @@ function CardItem(props) {
             <img
               className='cards__item__img'
               alt='Travel Image'
-              src={props.src}
+              src='images/60109.jpg'
             />
           </figure>
           <div className='cards__item__info'>
-            <h5 className='cards__item__text'>{props.text}</h5>
+            <h6 className='cards__item__text'>{(props.description || "").substring(0, 30)}...</h6>
+            <p className="cards__item__details">
+            <GiDuration /> : {props.duration} heures
+            </p>
+            <p className="cards__item__details">
+            <MdOutlinePriceChange /> : {props.price} €
+            </p>
           </div>
         </Link>
       </li>

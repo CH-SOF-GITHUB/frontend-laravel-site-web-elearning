@@ -1,8 +1,9 @@
 import React from 'react';
 import '../css/Cards.css';
-import CardItem from './CardItem';
+//import CardItem from './CardItem';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import CardBlog from './CardBlog';
 
 
 
@@ -90,32 +91,32 @@ function NewBlogCards(props) {
       // showDots customDot={<CustomDot />}
       >
 
-<div><CardItem
+<div><CardBlog
           src='images/1.png'
           text='The Ultimate Python Course 2021'
           label='Programming'
           path='/services'
         /></div>
-        <div><CardItem
+        <div><CardBlog
           src='images/2.png'
           text='Mastering Django: Basics To Advance'
           label='Backend'
           path='/services'
         /></div>
-        <div><CardItem
+        <div><CardBlog
           src='images/3.png'
           text='Learn Complete React 2021'
           label='Frontend'
           path='/services'
         /></div>
-        <div><CardItem
+        <div><CardBlog
           src='images/4.png'
           text='NodeJS: Modern Javascript, Full-Stack'
           label='Full-Stack' //We can give label of either the category or like bestseller
           path='/products'
         /></div>
         <div>
-          <CardItem
+          <CardBlog
             src='images/5.png'
             text='Best PHP Learning Bundle with Rest APIs'
             label='Backend'
@@ -124,7 +125,7 @@ function NewBlogCards(props) {
         </div>
 
         <div>
-          <CardItem
+          <CardBlog
             src='images/6.png'
             text='AWS: Solution Architect Preparation Guide'
             label='Cloud Computing'

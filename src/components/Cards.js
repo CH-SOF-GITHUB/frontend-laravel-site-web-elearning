@@ -1,12 +1,28 @@
-import React from 'react';
-import '../css/Cards.css';
-import CardItem from './CardItem';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
+import React, { useEffect, useState } from 'react'
+import '../css/Cards.css'
+import CardItem from './CardItem'
+import Carousel from 'react-multi-carousel'
+import 'react-multi-carousel/lib/styles.css'
+import { fetchCourses } from '../services/coursesservice'
 
+function Cards (props) {
+  // Data formations for Carousel
+  const [formations, setFormations] = useState([])
 
+  // Fetching data from API
+  const dataFormations = async () => {
+    try {
+      const res = await fetchCourses()
+      setFormations(res.data)
+      console.log('formations: ', formations)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-function Cards(props) {
+  useEffect(() => {
+    dataFormations()
+  }, [])
 
   const responsive = {
     desktop: {
@@ -24,7 +40,7 @@ function Cards(props) {
       items: 1.5,
       slidesToSlide: 1 // optional, default to 1.
     }
-  };
+  }
 
   // For Custmizing Dots Of Carousel
   const CustomDot = ({ onClick, ...rest }) => {
@@ -33,19 +49,19 @@ function Cards(props) {
       index,
       active,
       carouselState: { currentSlide, deviceType }
-    } = rest;
+    } = rest
     //const carouselItems = [CarouselItem1, CaourselItem2, CarouselItem3];
     // onMove means if dragging or swiping in progress.
     // active is provided by this lib for checking if the item is active or not.
     return (
       <button
-        className={active ? "active" : "inactive"}
+        className={active ? 'active' : 'inactive'}
         onClick={() => onClick()}
       >
         {/* {React.Children.toArray(carouselItems)[index]} */}
       </button>
-    );
-  };
+    )
+  }
 
   // const arrowStyle = {
   //   background: "transparent",
@@ -64,9 +80,8 @@ function Cards(props) {
   //   </button>
   // );
 
-
   return (
-    <div className="cards">
+    <div className='cards'>
       <h1>Top Courses</h1>
       <br></br>
       <Carousel
@@ -76,44 +91,50 @@ function Cards(props) {
         responsive={responsive}
         ssr={true} // means to render carousel on server-side.
         infinite={true}
-        autoPlay={props.deviceType !== "mobile" ? true : false}
+        autoPlay={props.deviceType !== 'mobile' ? true : false}
         autoPlaySpeed={100000}
         keyBoardControl={true}
-        customTransition="all .5"
+        customTransition='all .5'
         transitionDuration={500}
-        containerClass="carousel-container"
-        removeArrowOnDeviceType={["tablet", "mobile"]}
+        containerClass='carousel-container'
+        removeArrowOnDeviceType={['tablet', 'mobile']}
         deviceType={props.deviceType}
-        dotListClass="custom-dot-list-style"
-        itemClass="carousel-item-padding-40-px"
+        dotListClass='custom-dot-list-style'
+        itemClass='carousel-item-padding-40-px'
 
-      // showDots customDot={<CustomDot />}
+        // showDots customDot={<CustomDot />}
       >
-
-<div><CardItem
-          src='images/1.png'
-          text='The Ultimate Python Course 2021'
-          label='Programming'
-          path='/services'
-        /></div>
-        <div><CardItem
-          src='images/2.png'
-          text='Mastering Django: Basics To Advance'
-          label='Backend'
-          path='/services'
-        /></div>
-        <div><CardItem
-          src='images/3.png'
-          text='Learn Complete React 2021'
-          label='Frontend'
-          path='/services'
-        /></div>
-        <div><CardItem
-          src='images/4.png'
-          text='NodeJS: Modern Javascript, Full-Stack'
-          label='Full-Stack' //We can give label of either the category or like bestseller
-          path='/products'
-        /></div>
+        {formations && formations.length > 0 ? (
+          formations.map((formation,index)  => (
+            <CardItem
+              key={index}
+              description={formation.description}
+              label={formation.title}
+              duration={formation.duration}
+              price={formation.price}
+              path={`/formations/${formation.id}`}
+            />
+          ))
+        ) : (
+          <p>Aucune formation disponible</p>
+        )}
+        {/*
+        <div>
+          <CardItem
+            src='images/3.png'
+            text='Learn Complete React 2021'
+            label='Frontend'
+            path='/services'
+          />
+        </div>
+        <div>
+          <CardItem
+            src='images/4.png'
+            text='NodeJS: Modern Javascript, Full-Stack'
+            label='Full-Stack' //We can give label of either the category or like bestseller
+            path='/products'
+          />
+        </div>
         <div>
           <CardItem
             src='images/5.png'
@@ -131,10 +152,10 @@ function Cards(props) {
             path='/sign-up'
           />
         </div>
-
+        */}
       </Carousel>
     </div>
-  );
+  )
 }
 
-export default Cards;
+export default Cards

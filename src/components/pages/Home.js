@@ -9,11 +9,16 @@ import TopCategoryCards from '../TopCategoryCards'
 function Home(props) {
     return (
         <>
-            <HeroSection />
-            <Cards/>
-            <NewCourseCards />
-            <NewBlogCards />
+            <HeroSection path='/signup'/>
+            {/*Uop Categories */}
             <TopCategoryCards />
+            {/* Top Courses */}
+            <Cards/>
+            {/* New Courses */}
+            {/*<NewCourseCards />*/}
+            {/* New Blogs */}
+            <NewBlogCards />
+            
             
         </>
     );
