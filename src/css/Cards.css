@@ -119,12 +119,13 @@
   
   .cards__item__info {
     padding: 20px 15px 30px;
+    text-align: center;
   }
   
   .cards__item__text {
     color: #000000;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 15px;
+    line-height: 18px;
   }
 
   .cards__item__description {
@@ -135,7 +136,7 @@
   }
   
   .cards__item__details {
-    color: #333333;
+    color: #010909;
     font-size: 14px;
     font-weight: bold;
     line-height: 20px;

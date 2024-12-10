@@ -4,6 +4,7 @@ import CardItem from './CardItem'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import { fetchCourses } from '../services/coursesservice'
+import { SiCoursera } from "react-icons/si";
 
 function Cards (props) {
   // Data formations for Carousel
@@ -82,7 +83,7 @@ function Cards (props) {
 
   return (
     <div className='cards'>
-      <h1>Top Courses</h1>
+      <h1><SiCoursera /> Top Courses</h1>
       <br></br>
       <Carousel
         swipeable={false}
@@ -112,6 +113,7 @@ function Cards (props) {
               label={formation.title}
               duration={formation.duration}
               price={formation.price}
+              photo={formation.photo}
               path={`/formations/${formation.id}`}
             />
           ))

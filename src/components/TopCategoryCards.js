@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import '../css/TopCategoryCards.css'
-import TopCategoryCardItem from './TopCategoryCardItem'
+import '../css/Cards.css';
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import { fetchCategories } from '../services/categoriesservice'
+import TopCategoryCardItem from './TopCategoryCardItem'
+import { BiCategory } from "react-icons/bi";
 
 function TopCategoryCards (props) {
-  // initialize categories state
   const [categories, setCategories] = useState([])
 
-  // fetch dat categories from services
-  const fetchcatgs = async () => {
+  // Fetch categories from the service
+  const fetchCategoriesData = async () => {
     try {
       const res = await fetchCategories()
       setCategories(res.data)
-      console.log(res)
     } catch (error) {
       console.error(error)
     }
   }
 
-  //manage state
   useEffect(() => {
-    fetchcatgs()
+    fetchCategoriesData()
   }, [])
 
   const responsive = {
@@ -83,7 +81,7 @@ function TopCategoryCards (props) {
 
   return (
     <div className='cards'>
-      <h1>Top Categories</h1>
+      <h1><BiCategory /> Top Categories</h1>
       <br></br>
       <Carousel
         swipeable={false}
@@ -105,18 +103,20 @@ function TopCategoryCards (props) {
 
         // showDots customDot={<CustomDot />}
       >
-        {categories.map((category, index) => (
-          <div>
+        {categories.length > 0 ? (
+          categories.map((category, index) => (
             <TopCategoryCardItem
               key={index}
-              label={category.category_name}
               description={category.category_description}
-              path={`/categories/${category.id}`}
+              label={category.category_name}
+              photo={category.photo || 'https://via.placeholder.com/150'}
+              path={`categories/${category.id}`}
             />
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No categories available</p>
+        )}
       </Carousel>
-      <br></br>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import '../css/Cards.css';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import CardBlog from './CardBlog';
-
+import { ImBlogger2 } from "react-icons/im";
 
 
 function NewBlogCards(props) {
@@ -68,7 +68,7 @@ function NewBlogCards(props) {
 
   return (
     <div className="cards">
-      <h1>New Blogs</h1>
+      <h1><ImBlogger2 /> New Blogs</h1>
       <br></br>
       <Carousel
         swipeable={false}
