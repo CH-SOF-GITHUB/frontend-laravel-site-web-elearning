@@ -27,7 +27,7 @@ const Signup = () => {
         let item = { name, email, password, password_confirmation: confirmpassword };
 
         try {
-            let result = await fetch("http://localhost:8000/api/auth/register", {
+            let result = await fetch("http://localhost:8000/api/learning/register", {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",

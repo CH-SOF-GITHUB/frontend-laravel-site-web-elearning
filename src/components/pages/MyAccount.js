@@ -1,36 +1,42 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React from 'react'
+import { useEffect, useState } from 'react'
 
-function MyAccount(props) {
-    useEffect(async() => {
-        await validateToken();
-    }, []);
+function MyAccount (props) {
+  var user = JSON.parse(localStorage.getItem('user-info'))
 
-    var user = JSON.parse(localStorage.getItem('user-info'));
+  function validateToken () {
+    if (user != null) {
+      // Get current timestamp
+      const current = Math.round(Date.now() / 1000)
 
-    async function validateToken() {
-        if (user != null) {
-            var current = Math.round(Date.now() / 1000);
-            if (user.token.exp < current) {
-                localStorage.removeItem('user-info');
-                window.location.replace("/login");
-            }
-        }
-        else {
-            window.location.replace("/login");
-        }
+      // Calculate token expiration based on 'expires_in' value
+      const tokenIssuedAt = Math.floor(Date.now() / 1000) - (3600 - user.expires_in)
+      const tokenExpiryTime = tokenIssuedAt + user.expires_in
+
+      // Check if token has expired
+      if (current > tokenExpiryTime) {
+        localStorage.removeItem('user-info')
+        window.location.replace('/login')
+      }
+    } else {
+      window.location.replace('/login')
     }
-    
-    return (
-        <>
-        <div className="course-container">
+  }
+
+  //
+  useEffect(() => {
+    validateToken()
+  }, [])
+
+  return (
+    <>
+      <div className='course-container'>
         <h1>My Account</h1>
-            <p>Name: {user.token.data.name}</p>
-            <p>Phone: {user.token.data.phone}</p>
-            <p>Email: {user.token.data.email}</p>
-        </div>
-        </>
-    );
+        <p>Name: {user.user.name}</p>
+        <p>Email: {user.user.email}</p>
+      </div>
+    </>
+  )
 }
 
 export default MyAccount;

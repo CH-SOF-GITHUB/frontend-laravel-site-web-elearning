@@ -67,7 +67,7 @@ function Footer() {
               LetsProgramify
             </Link>
           </div>
-          <small class='website-rights'>LetsProgramify © 2020</small>
+          <small class='website-rights'>LetsProgramify © 2024</small>
           <div class='social-icons'>
             <Link
               class='social-icon-link facebook'

@@ -4,7 +4,7 @@ import CardItem from './CardItem'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import { fetchCourses } from '../services/coursesservice'
-import { SiCoursera } from "react-icons/si";
+import { SiCoursera } from 'react-icons/si'
 
 function Cards (props) {
   // Data formations for Carousel
@@ -83,7 +83,9 @@ function Cards (props) {
 
   return (
     <div className='cards'>
-      <h1><SiCoursera /> Top Courses</h1>
+      <h1>
+        <SiCoursera /> Top Courses
+      </h1>
       <br></br>
       <Carousel
         swipeable={false}
@@ -106,7 +108,7 @@ function Cards (props) {
         // showDots customDot={<CustomDot />}
       >
         {formations && formations.length > 0 ? (
-          formations.map((formation,index)  => (
+          formations.map((formation, index) => (
             <CardItem
               key={index}
               description={formation.description}
@@ -114,50 +116,15 @@ function Cards (props) {
               duration={formation.duration}
               price={formation.price}
               photo={formation.photo}
-              path={`/formations/${formation.id}`}
+              path={`/course_content/${formation.id}`}
             />
           ))
         ) : (
           <p>Aucune formation disponible</p>
         )}
-        {/*
-        <div>
-          <CardItem
-            src='images/3.png'
-            text='Learn Complete React 2021'
-            label='Frontend'
-            path='/services'
-          />
-        </div>
-        <div>
-          <CardItem
-            src='images/4.png'
-            text='NodeJS: Modern Javascript, Full-Stack'
-            label='Full-Stack' //We can give label of either the category or like bestseller
-            path='/products'
-          />
-        </div>
-        <div>
-          <CardItem
-            src='images/5.png'
-            text='Best PHP Learning Bundle with Rest APIs'
-            label='Backend'
-            path='/sign-up'
-          />
-        </div>
-
-        <div>
-          <CardItem
-            src='images/6.png'
-            text='AWS: Solution Architect Preparation Guide'
-            label='Cloud Computing'
-            path='/sign-up'
-          />
-        </div>
-        */}
       </Carousel>
     </div>
   )
 }
 
-export default Cards
+export default Cards;

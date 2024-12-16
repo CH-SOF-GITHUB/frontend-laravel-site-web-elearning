@@ -34,7 +34,7 @@ const Login = () => {
         //console.warn(email, password);
         let item = { email, password };
         let result;
-        fetch("http://localhost:8000/api/auth/login", {
+        fetch("http://localhost:8000/api/learning/login", {
             method: 'POST',
             mode: 'cors',
             headers: {

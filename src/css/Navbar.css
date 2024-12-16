@@ -76,7 +76,7 @@
 .nav-menu-right {
   display: flex;
   align-items: center;
-  margin-left: 600px;
+  margin-left: 650px;
   margin-right: 10px;
 }
 
@@ -228,7 +228,6 @@
   float: right;
   position: relative;
   display: inline-block;
-  margin-left: 100px;
 }
 
 .dropdown-content {

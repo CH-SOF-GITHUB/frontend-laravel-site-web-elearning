@@ -1,214 +1,104 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import '../../css/CourseContent.css';
-import { useEffect, useState } from 'react';
-import { Markup } from 'interweave';
-//import ReactHtmlParser from "react-html-parser"
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+// Pour afficher du contenu HTML
+import { Markup } from 'interweave' 
+// Pour gérer les commentaires
+import CommentsBlock from 'simple-react-comments' 
+import '../../css/CourseContent.css'
 
-//comments component
-import CommentsBlock from 'simple-react-comments';
-//import { commentsData } from './data/index'; // Some comment data
+export default function CourseContent () {
+  // Récupère l'ID du cours depuis l'URL
+  const { id } = useParams()
+  // Stocke les données du cours
+  const [course, setCourse] = useState(null)
+  // Stocke les commentaires
+  const [comments, setComments] = useState([])
+  // Stocke le commentaire en cours de saisie
+  const [newComment, setNewComment] = useState('')
 
-
-export default function CourseContent(props) {
-    const [courseVideos, setCourseVideos] = useState([]);
-    const [courseVideo, setCourseVideo] = useState([]);
-    const [videoId, setVideoId] = useState(0);
-    const [isLoggedIn, setisLoggedIn] = useState(false);
-    const [headerState, setHeaderState] = useState(0);
-    const [comments, setComments] = useState([
-        {
-            authorUrl: '#',
-            avatarUrl:
-                'https://cdnb.artstation.com/p/users/avatars/000/126/159/large/582fd86d44a71299b5cc51fe9f580471.jpg?1447075438',
-            createdAt: new Date(1530297561680),
-            fullName: 'Alexey Ryabov',
-            text: '<h1>hello whats up</h1>',
-        },
-        {
-            authorUrl: '/asdf',
-            avatarUrl:
-                'https://cdnb.artstation.com/p/users/avatars/000/126/159/large/582fd86d44a71299b5cc51fe9f580471.jpg?1447075438',
-            createdAt: new Date(1530297561680),
-            fullName: 'Alexey Ryabov',
-            text: 'react-simple-comments is awesome!',
-        },
-    ]
-    );
-    var urlParams = new URLSearchParams(window.location.search);
-
-
-
-    let apiURL = window.apiurl + "list_course_videos.php/";
-    let videoURL = window.apiurl + "retrieve_course_video.php/"
-    const fetchData = async () => {
-        if (urlParams.has('id')) {
-            apiURL = apiURL + "?id=" + urlParams.get('id');
-            const response = await axios.get(apiURL);
-
-            setCourseVideos(response.data.data);
-            console.log(courseVideos);
-            console.log(response.data);
-        }
+  // Récupération des données du cours
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        // Remplacez par votre API
+        const response = await axios.get(`/api/courses/${id}`)
+        setCourse(response.data)
+        // Charge les commentaires existants
+        setComments(response.data.comments || [])
+      } catch (error) {
+        console.error(
+          'Erreur lors de la récupération des données du cours :',
+          error
+        )
+      }
     }
 
-    const fetchVideo = async (vid_id) => {
-        if (vid_id === 0) {
-            videoURL = videoURL + "?id=" + urlParams.get('id');
-        }
-        else {
-            videoURL = videoURL + "?id=" + urlParams.get('id') + "&" + "video_id=" + vid_id;
-        }
-        const response2 = await axios.get(videoURL);
-        setCourseVideo(response2.data);
-        console.log(courseVideo);
-        console.log(response2.data);
+    fetchCourseData()
+  }, [id])
 
+  // Gestion de l'ajout d'un commentaire
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      const comment = {
+        // Remplacez par le nom de l'utilisateur connecté
+        author: 'Utilisateur',
+        text: newComment,
+        date: new Date().toISOString()
+      }
+
+      // Ajoute le commentaire localement
+      setComments([...comments, comment])
+
+      // Réinitialise le champ de saisie
+      setNewComment('')
+      // Envoyer le commentaire à l'API (optionnel)
+      axios.post(`/api/courses/${id}/comments`, comment).catch(error => {
+        console.error("Erreur lors de l'ajout du commentaire :", error)
+      })
     }
+  }
 
-    var user = JSON.parse(localStorage.getItem('user-info'));
+  // changer ce component par un spinner
+  if (!course) {
+    return <p>Chargement des données du cours...</p>
+  }
 
-    async function validateToken() {
-        // var user = JSON.parse(localStorage.getItem('user-info'));
-        if (user != null) {
-            var current = Math.round(Date.now() / 1000);
-            if (user.token.exp < current) {
-                localStorage.removeItem('user-info');
+  return (
+    <div className='course-content'>
+      <h1>{course.title}</h1>
+      <p>{course.description}</p>
 
-            }
-            else {
-                setisLoggedIn(true);
-            }
-        }
-    }
+      {/* Vidéo YouTube */}
+      <div className='video-container'>
+        <iframe
+          width='100%'
+          height='400'
+          src={`https://www.youtube.com/embed/${course.videoId}`}
+          title='YouTube video player'
+          frameBorder='0'
+          allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+          allowFullScreen
+        ></iframe>
+      </div>
 
-    const getComments = async (vid_id) => {
-        if (urlParams.has('id')) {
-            apiURL = window.apiurl + "list_video_comments.php?id=" + vid_id;
-            const response = await axios.get(apiURL);
-            var data = response.data.data;
-            console.log(response.data.data);
-            for (var i = 0; i < data.length; i++) {
-                data[i]["createdAt"] = new Date(data[i]["createdAt"] * 1000);
-                console.log(data[i]["createdAt"])
-            }
-            setComments(data);
-        }
-    }
+      {/* Contenu du cours */}
+      <div className='course-details'>
+        <Markup content={course.content} />
+      </div>
 
-    async function createComment(text) {
-        const data = { body: text, user_id: user.token.data.id, video_id: courseVideo.id };
-        axios.post(window.apiurl + "create_video_comment.php", data)
-            .then(response => alert("Done"))
-            .catch((err) => alert(err));
-
-    }
-
-    useEffect(() => {
-        validateToken();
-        if (urlParams.has('id') && !urlParams.has('video_id')) {
-            fetchData();
-            fetchVideo(0);
-        }
-        else if (urlParams.has('id') && urlParams.has('video_id')) {
-            fetchData();
-            fetchVideo(urlParams.get('video_id'));
-            getComments(urlParams.get('video_id'));
-        }
-
-    }, []);
-
-
-    var stringToHTML = function (str) {
-        var dom = document.createElement('div');
-        dom.innerHTML = str;
-        return dom;
-    };
-
-    const changeHeaderState = async (e, state) => {
-        e.preventDefault();
-        setHeaderState(state);
-    }
-
-
-    return (
-        <div className="main-container">
-            <div className="main-content">
-                <div className="video-section">
-                    <div className="video-container">
-                        {/* <iframe src="https://www.youtube.com/embed/d4u1WNRincc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="On"></iframe> */}
-                        <iframe src={"https://www.youtube.com/embed/" + courseVideo.url} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="On"></iframe>
-                    </div>
-                </div>
-                <div className="video-details">
-                    <div className="details-nav">
-                        <ul className="details-nav-tabs">
-                            <li className="details-nav-tab">
-                                <a href="#" className={headerState === 0 ? 'details-nav-link active' : 'details-nav-link'} onClick={e => changeHeaderState(e, 0)}>Overview</a>
-                            </li>
-                            <li className="details-nav-tab">
-                                <a href="#" className={headerState === 1 ? 'details-nav-link active' : 'details-nav-link'} onClick={e => changeHeaderState(e, 1)}>Q&A</a>
-                            </li>
-                            <li className="details-nav-tab">
-                                <a href="#" className={headerState === 2 ? 'details-nav-link active' : 'details-nav-link'} onClick={e => changeHeaderState(e, 2)}>Files</a>
-                            </li>
-                            <li className="details-nav-tab">
-                                <a href="#" className={headerState === 3 ? 'details-nav-link active' : 'details-nav-link'} onClick={e => changeHeaderState(e, 3)}>Announcements</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div className="nav-tab-info">
-                        {headerState == 0 && <Markup content={courseVideo.description} />}
-                        {headerState == 1 && <CommentsBlock
-                            comments={comments}
-                            signinUrl={'/login'}
-                            isLoggedIn={isLoggedIn}
-                            false // set to true if you are using react-router
-                            onSubmit={text => {
-                                if (text.length > 0) {
-                                    setComments(
-                                        [...comments,
-                                        {
-                                            authorUrl: '#',
-                                            avatarUrl: 'https://cdnb.artstation.com/p/users/avatars/000/126/159/large/582fd86d44a71299b5cc51fe9f580471.jpg?1447075438',
-                                            createdAt: new Date(),
-                                            fullName: user.token.data.name,
-                                            text,
-                                        }]
-                                    );
-
-                                    createComment(text);
-                                    console.log('submit:', text);
-                                }
-                            }}
-                        />
-                        }
-                        {headerState == 2 && <div>No Files Available</div>}
-                        {headerState == 3 && <div>No Announcements till now.</div>}
-
-
-
-
-                        {/* {ReactHtmlParser(courseVideo.description)} */}
-                    </div>
-
-                </div>
-
-            </div>
-            <div className="content-parent">
-                <div className="content-header">
-                    <h2>Course Content</h2></div>
-                <div className="content">
-                    {courseVideos.map((video, index) => (
-                        <a href="#" className={video.id === courseVideo.id ? 'video-title active' : 'video-title'} onClick={() => { fetchVideo(video.id); getComments(video.id); }}>
-                            {index + 1}. {video.title}
-                        </a>
-                    ))}
-                </div>
-            </div>
-        </div>
-    )
+      {/* Section des commentaires */}
+      <div className='comments-section'>
+        <h2>Commentaires</h2>
+        <CommentsBlock
+          comments={comments}
+          isLoggedIn={true}
+          onSubmit={text => {
+            setNewComment(text)
+            handleAddComment()
+          }}
+        />
+      </div>
+    </div>
+  )
 }
-
-// const styles = StyleSheet.create({})
