@@ -4,6 +4,7 @@ import 'react-multi-carousel/lib/styles.css'
 import React, { useEffect, useState } from 'react'
 import { fetchCourses } from '../services/coursesservice'
 import CourseItem from './CourseItem'
+import { BsFillCollectionFill } from "react-icons/bs";
 
 function AllCoursesCards () {
   const [courseData, setCourseData] = useState([])
@@ -26,7 +27,7 @@ function AllCoursesCards () {
 
   return (
     <div className='cards'>
-      <h1>All Courses</h1>
+      <h1><BsFillCollectionFill /> Our featured courses</h1>
       <br></br>
       <div className='carddeck'>
         {courseData.map((course, index) => (
@@ -35,7 +36,7 @@ function AllCoursesCards () {
             description={course.description}
             label={course.title}
             src={course.photo}
-            path={'/course_content/?' + 'id=' + course.id}
+            path={'/course_content/' + course.id}
           />
         ))}
       </div>

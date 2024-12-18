@@ -6,23 +6,23 @@ import 'react-multi-carousel/lib/styles.css'
 import { fetchCourses } from '../services/coursesservice'
 import { SiCoursera } from 'react-icons/si'
 
-function Cards (props) {
+function Cards(props) {
   // Data formations for Carousel
-  const [formations, setFormations] = useState([])
+  const [courses, setCourses] = useState([])
 
   // Fetching data from API
-  const dataFormations = async () => {
+  const dataCourses = async () => {
     try {
       const res = await fetchCourses()
-      setFormations(res.data)
-      console.log('formations: ', formations)
+      setCourses(res.data)
+      console.log('courses: ', courses)
     } catch (error) {
       console.log(error)
     }
   }
 
   useEffect(() => {
-    dataFormations()
+    dataCourses()
   }, [])
 
   const responsive = {
@@ -105,18 +105,18 @@ function Cards (props) {
         dotListClass='custom-dot-list-style'
         itemClass='carousel-item-padding-40-px'
 
-        // showDots customDot={<CustomDot />}
+      // showDots customDot={<CustomDot />}
       >
-        {formations && formations.length > 0 ? (
-          formations.map((formation, index) => (
+        {courses && courses.length > 0 ? (
+          courses.map((course, index) => (
             <CardItem
               key={index}
-              description={formation.description}
-              label={formation.title}
-              duration={formation.duration}
-              price={formation.price}
-              photo={formation.photo}
-              path={`/course_content/${formation.id}`}
+              description={course.description}
+              label={course.title}
+              duration={course.duration}
+              price={course.price}
+              photo={course.photo}
+              path={`/course_content/${course.id}`}
             />
           ))
         ) : (
