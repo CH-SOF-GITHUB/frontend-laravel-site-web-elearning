@@ -148,7 +148,7 @@
 /* design course details */
 /* CourseContent.css */
 .course-content {
-    padding: 20px;
+    padding: 30px;
 }
 
 .course-content h1 {
@@ -193,6 +193,77 @@
     vertical-align: middle;
     color: #555;
 }
+
+/* dsign commentaires  */
+/* Conteneur des commentaires */
+.nav-tab-info {
+    margin-top: 20px;
+  }
+  
+  .comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Style de chaque commentaire */
+  .comment {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid #e67e22;
+    box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Entête du commentaire (utilisateur + date) */
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  /* Conteneur de l'avatar */
+  .avatar-container {
+    font-size: 30px;
+    color: #007bff;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    padding: 8px;
+  }
+  
+  /* Détails du commentaire (auteur et date) */
+  .comment-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .comment-details strong {
+    font-size: 1.1em;
+  }
+  
+  .comment-date {
+    font-size: 0.5em;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .clock-comment-icon {
+    font-size: 0.9em;
+    color: #555;
+  }
+  
+  /* Contenu du commentaire */
+  .comment-content {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #333;
+  }
+  
 
 /* spinner loading données course content */
 /* Spinner de chargement */
