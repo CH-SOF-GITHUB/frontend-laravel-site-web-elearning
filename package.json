@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.5.2",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-brands-svg-icons": "^6.7.1",
@@ -15,7 +16,7 @@
     "@tinymce/tinymce-react": "^3.12.6",
     "ajv": "^6.12.6",
     "ajv-keywords": "^3.5.2",
-    "antd": "^4.16.1",
+    "antd": "^4.24.16",
     "axios": "^0.21.1",
     "bootstrap": "^5.3.3",
     "interweave": "^12.7.2",
