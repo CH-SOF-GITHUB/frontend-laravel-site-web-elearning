@@ -119,7 +119,7 @@ function Navbar () {
                 onClick={event => handleProtectedRoute(event, '/courses')}
                 style={{ cursor: 'pointer' }}
               >
-                {!button && <i class='fas fa-book'></i>}Courses
+                {!button && <i class='fas fa-book'></i>}All courses
               </Link>
             </li>
             <li className='nav-item'>

@@ -1,34 +1,43 @@
 import React, { useEffect, createElement, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Comment, Avatar, Tooltip } from "antd";
-import "antd/dist/antd.css";
+//import { Comment, Avatar, Tooltip } from "antd";
+//import "antd/dist/antd.css";
+/*
 import {
   LikeOutlined,
   DislikeFilled,
   DislikeOutlined,
   LikeFilled
 } from "@ant-design/icons";
+ */
+import { CommentSection } from "react-comments-section";
+import "react-comments-section/dist/index.css";
 import "../../css/CourseContent.css";
 import { fetchCourseById } from "../../services/coursesservice";
 // Importation des icônes
-import { FaRegClock, FaEuroSign } from "react-icons/fa";
+import { FaRegClock, FaEuroSign, FaRegCommentDots } from "react-icons/fa";
 import { fetchCommentsByCourse } from "../../services/commentsservice";
+import Comment from "../Comment";
+import CommentForm from "../CommentForm";
+import { toast } from "react-toastify";
 
 export default function CourseContent() {
   // Récupère l'ID du cours depuis l'URL
   const { id } = useParams();
   // To maintain Like state
-  const [likesCount, setLikesCount] = useState(0);
+  // const [likesCount, setLikesCount] = useState(0);
   // To maintain Dislike state
-  const [dislikesCount, setDislikesCount] = useState(0);
+  // const [dislikesCount, setDislikesCount] = useState(0);
   // To maintain action state
-  const [action, setAction] = useState(null);
+  // const [action, setAction] = useState(null);
   // Stocke les données du cours
   const [course, setCourse] = useState(null);
   // Stocke les commentaires
   const [comments, setComments] = useState([]);
   // Stocke le commentaire en cours de saisie
-  const [newComment, setNewComment] = useState("");
+  const [author, setAuthor] = useState("");
+  const [content, setContent] = useState("");
+  // Récupération du statut d'authentification
   const [isloginned, setLoginStatus] = useState(false);
   // Récupération des données du cours
   const fetchCourseData = async () => {
@@ -44,13 +53,18 @@ export default function CourseContent() {
     }
   };
 
+  // Debugging: Log comments whenever they change
+  useEffect(() => {
+    console.log("Loaded comments:", comments);
+  }, [comments]);
+
   // Récupération les commentaires de course
   const fetchCommentsCourse = async () => {
     try {
       // Remplacez par votre API
       const response = await fetchCommentsByCourse(id);
       // Charge les commentaires existants
-      setComments(response.data.comments || []);
+      setComments(response.data.comments);
       console.log("comments: " + comments);
     } catch (error) {
       console.error(
@@ -101,28 +115,73 @@ export default function CourseContent() {
     return <p>Veuillez vous connecter pour accéder au contenu du cours.</p>;
   }
 
-  // Gestion de l'ajout d'un commentaire
-  /*const handleAddComment = () => {
-    if (newComment.trim()) {
-      const comment = {
-        // Remplacez par le nom de l'utilisateur connecté
-        author: 'Utilisateur',
-        text: newComment,
-        date: new Date().toISOString()
-      }
+  // Gestion de l'ajout d'un commentaire [Handle adding a new comment]
+  const handleAddComment = (event) => {
+    event.preventDefault();
+    const comment = {
+      author: author, // Use the author from the form
+      text: content
+    };
 
-      // Ajoute le commentaire localement
-      setComments([...comments, comment])
+    // Update local comments state
+    setComments((prevComments) => [...prevComments, comment]);
 
-      // Réinitialise le champ de saisie
-      setNewComment('')
-      // Envoyer le commentaire à l'API (optionnel)
-      axios.post(`/api/courses/${id}/comments`, comment).catch(error => {
-        console.error("Erreur lors de l'ajout du commentaire :", error)
+    // Reset the input field
+    setAuthor("");
+    setContent("");
+    // CONFIG TOKENS
+    const token = storedUser.access_token;
+    // Send the comment to the API using fetch
+    fetch(`http://localhost:8000/api/learning/user/courses/${id}/comments`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(comment)
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw response;
+        }
+        return response.json();
       })
-    }
-  }*/
+      .then((data) => {
+        console.log(data);
+        localStorage.setItem("user-comment", JSON.stringify(data));
+        // alert("Vous avez connecté avec succès !");
+        toast.success("Vous avez ajouté un commentaire avec succès !", {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          draggable: true
+        });
+      })
+      .catch(async (err) => {
+        let x = await err.json();
+        console.log(x.message);
+        toast.error(x.message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          draggable: true
+        });
+      });
+  };
 
+  const handleReply = (commentId, reply) => {
+    const updatedComments = comments.map((comment) => {
+      if (comment.id === commentId) {
+        return { ...comment, replies: [...comment.replies, reply] };
+      }
+      return comment;
+    });
+    setComments(updatedComments);
+  };
   // Affichage du spinner si le cours est en cours de chargement
   if (!course) {
     return (
@@ -137,8 +196,10 @@ export default function CourseContent() {
 
   return (
     <div className="course-content">
-      <h1>{course.title}</h1>
-      <p>{course.description}</p>
+      <div>
+        <h1>{course.title}</h1>
+        <p>{course.description}</p>
+      </div>
       {/* durée de course et le prix */}
       <div className="course-meta">
         <div className="course-duration">
@@ -163,7 +224,10 @@ export default function CourseContent() {
       </div>
       {/* Section des commentaires */}
       <div className="nav-tab-info">
-        <h2>Commentaires:</h2>
+        <h3>
+          <FaRegCommentDots /> commentaires:{" "}
+        </h3>
+        {/*<h2>Commentaires:</h2>*/}
         <div className="comments-list">
           {comments.length === 0 ? (
             <p>
@@ -171,74 +235,32 @@ export default function CourseContent() {
               commentaire !
             </p>
           ) : (
-            comments.map((comment) => (
-              <div
-                style={{
-                  display: "block",
-                  width: 700,
-                  padding: 30
-                }}
-                key={comment.id}
-              >
-                <h4>ReactJS Ant-Design Comment Component</h4>
+            <div>
+              {comments.map((comment) => (
                 <Comment
-                  author={<a>{comment.author}</a>}
-                  avatar={
-                    <Avatar style={{ backgroundColor: "green" }}>
-                      {comment.author[0]}
-                    </Avatar>
-                  }
-                  content={<p>{comment.text}</p>}
-                  actions={[
-                    <Tooltip title="Like">
-                      <span
-                        onClick={() => {
-                          setLikesCount(1);
-                          setDislikesCount(0);
-                          setAction("liked");
-                        }}
-                      >
-                        {createElement(
-                          action === "liked" ? LikeFilled : LikeOutlined
-                        )}
-                        {likesCount}
-                      </span>
-                    </Tooltip>,
-                    <Tooltip title="Dislike">
-                      <span
-                        onClick={() => {
-                          setLikesCount(0);
-                          setDislikesCount(1);
-                          setAction("disliked");
-                        }}
-                      >
-                        {React.createElement(
-                          action === "disliked"
-                            ? DislikeFilled
-                            : DislikeOutlined
-                        )}
-                        {dislikesCount}
-                      </span>
-                    </Tooltip>
-                  ]}
-                  datetime={
-                    comment.created_at
-                      ? new Date(comment.created_at).toLocaleDateString()
-                      : "Date non disponible"
-                  }
+                  key={comment.id}
+                  comment={comment}
+                  onReply={(reply) => handleReply(comment.id, reply)}
                 />
-              </div>
-            ))
+              ))}
+              <form onSubmit={handleAddComment} className="comment-form">
+                <input
+                  type="text"
+                  value={author}
+                  onChange={(event) => setAuthor(event.target.value)}
+                  placeholder="Author"
+                />
+                <textarea
+                  value={content}
+                  onChange={(event) => setContent(event.target.value)}
+                  placeholder="Comment"
+                />
+                <button type="submit">submit</button>
+              </form>
+            </div>
           )}
         </div>
       </div>
-      {/*
-        <CommentsBlock
-          comments={comments}
-          isLoggedIn={true}
-          onSubmit={""}
-        />
-        */}
     </div>
   );
 }
