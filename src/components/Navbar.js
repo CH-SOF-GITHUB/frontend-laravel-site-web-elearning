@@ -119,7 +119,7 @@ function Navbar () {
                 onClick={event => handleProtectedRoute(event, '/courses')}
                 style={{ cursor: 'pointer' }}
               >
-                {!button && <i class='fas fa-book'></i>}All courses
+                {!button && <i class='fas fa-book'></i>}Courses
               </Link>
             </li>
             <li className='nav-item'>
@@ -164,18 +164,18 @@ function Navbar () {
                   </Link>
                 )}
                 {isloginned && (
-                  <Link to='/instructor/dashboard' className='login-link'>
-                    Instructor
+                  <Link to='/instructor/dashboard' className='student-information-link'>
+                    Student Infos <i class="fas fa-user-graduate"></i>
                   </Link>
                 )}
                 {isloginned && (
-                  <Link to='/myaccount' className='login-link'>
-                    My Account
+                  <Link to='/myaccount' className='my-account-link'>
+                    My account &nbsp;&nbsp;<i class="fas fa-user-alt"></i>
                   </Link>
                 )}
                 {isloginned && (
-                  <Link to='/logout' className='login-link'>
-                    Logout
+                  <Link to='/logout' className='logout-link'>
+                    Logout &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-sign-out-alt"></i>
                   </Link>
                 )}
               </div>

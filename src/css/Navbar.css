@@ -23,7 +23,6 @@
   align-items: center;
 }
 
-
 .nav-menu {
   display: grid;
   grid-template-columns: repeat(4, auto);
@@ -76,7 +75,7 @@
 .nav-menu-right {
   display: flex;
   align-items: center;
-  margin-left: 500px;
+  margin-left: 480px;
   margin-right: 10px;
 }
 
@@ -97,7 +96,6 @@
   cursor: pointer;
   margin: 0 10px;
 }
-
 
 @media screen and (max-width: 960px) {
   .navbar-container {
@@ -207,11 +205,9 @@
   }
 }
 
-
-
 /* Dropdown Button */
 .dropbtn {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 16px;
   font-size: 16px;
@@ -257,6 +253,24 @@
 }
 
 /* When rendered, the icon class adds a ::before pseudo-element to the icon tag that prevents the button's click event. */
-button>i {
+button > i {
   pointer-events: none;
+}
+
+.student-information-link {
+  font-size: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+.logout-link {
+  font-size: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+.my-account-link {
+  font-size: 12px;
+  align-items: center;
+  text-align: center;
 }

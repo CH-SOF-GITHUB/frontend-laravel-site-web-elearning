@@ -13,7 +13,9 @@ function CardItem (props) {
               src={props.photo}
             />
           <div className='cards__item__info'>
-            <h4 className='cards__item__text' style={{fontFamily:'inherit', textAlign:'center'}}>{props.label}</h4>
+            <h4 className='cards__item__text' style={{fontFamily:'inherit', textAlign:'center'}}>
+              {props.label}
+            </h4>
           </div>
         </Link>
       </li>

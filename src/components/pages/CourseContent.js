@@ -15,10 +15,15 @@ import "react-comments-section/dist/index.css";
 import "../../css/CourseContent.css";
 import { fetchCourseById } from "../../services/coursesservice";
 // Importation des icônes
-import { FaRegClock, FaEuroSign, FaRegCommentDots } from "react-icons/fa";
+import {
+  FaRegClock,
+  FaEuroSign,
+  FaRegCommentDots,
+  GiArchiveRegister
+} from "react-icons/fa";
+
 import { fetchCommentsByCourse } from "../../services/commentsservice";
 import Comment from "../Comment";
-import CommentForm from "../CommentForm";
 import { toast } from "react-toastify";
 
 export default function CourseContent() {
@@ -110,10 +115,10 @@ export default function CourseContent() {
       fetchCommentsCourse();
     }
   }, [isloginned, id]);
-  // Affichage conditionnel selon l'état de connexion
+  /* Affichage conditionnel selon l'état de connexion
   if (!isloginned) {
     return <p>Veuillez vous connecter pour accéder au contenu du cours.</p>;
-  }
+  }*/
 
   // Gestion de l'ajout d'un commentaire [Handle adding a new comment]
   const handleAddComment = (event) => {
@@ -209,6 +214,10 @@ export default function CourseContent() {
           <FaEuroSign className="icon" /> :{" "}
           {course.price ? `${course.price} €` : "Prix non disponible"}
         </div>
+        <div className="course-register">
+          <i class="fas fa-file-invoice-dollar"></i>
+          <a href="#">S'inscrire à ce cours</a>
+        </div>
       </div>
       {/* Vidéo YouTube */}
       <div className="video-container">
@@ -243,22 +252,22 @@ export default function CourseContent() {
                   onReply={(reply) => handleReply(comment.id, reply)}
                 />
               ))}
-              <form onSubmit={handleAddComment} className="comment-form">
-                <input
-                  type="text"
-                  value={author}
-                  onChange={(event) => setAuthor(event.target.value)}
-                  placeholder="Author"
-                />
-                <textarea
-                  value={content}
-                  onChange={(event) => setContent(event.target.value)}
-                  placeholder="Comment"
-                />
-                <button type="submit">submit</button>
-              </form>
             </div>
           )}
+          <form onSubmit={handleAddComment} className="comment-form">
+            <input
+              type="text"
+              value={author}
+              onChange={(event) => setAuthor(event.target.value)}
+              placeholder="Author"
+            />
+            <textarea
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+              placeholder="Comment"
+            />
+            <button type="submit" className="comment-form-btn">envoyer</button>
+          </form>
         </div>
       </div>
     </div>

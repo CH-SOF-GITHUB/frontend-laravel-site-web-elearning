@@ -253,6 +253,10 @@
   font-weight: bold; /* Make the letter bold */
 }
 
+.comment-form-btn {
+  width: 150px; 
+}
+
 button {
   background-color: #007bff;
   color: white;
@@ -397,4 +401,15 @@ textarea:focus {
   height: 100vh;
   font-size: 1.2rem;
   color: #555;
+}
+
+/* Style de la barre de progression */
+.course-register {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.course-register a {
+  margin-left: 25px;
 }
