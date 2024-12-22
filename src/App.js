@@ -19,6 +19,7 @@ import './App.css';
 import InstructorDashboard from './components/instructor/pages/InstructorDashboard'
 import { DialogsProvider } from '@toolpad/core'
 import EnrollCourse from './components/pages/EnrollCourse'
+import Blog from './components/pages/Blog'
 
 
 
@@ -37,7 +38,8 @@ const App = () => {
           <Route path='/logout' element={<Logout />} />
           <Route path='/myaccount' element={<MyAccount />} />
           <Route path='/courses/enroll/:id' element={<EnrollCourse />} />
-          
+          <Route path='/blog' element={<Blog />} />
+
           {/* Instructor Routes */}
           {/*<Route path='/instructor/dashboard' element={<MyCourses />} />*/}
           <Route path='/instructor/dashboard' element={<InstructorDashboard />} />
