@@ -4,6 +4,7 @@ import { Button } from './Button'
 import '../css/Navbar.css'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import SearchAppBar from './Search'
 
 function Navbar () {
   const [click, setClick] = useState(false)
@@ -129,7 +130,8 @@ function Navbar () {
             </li>
           </ul>
           <div class='nav-menu-right'>
-            <i class='fas fa-search'></i>
+            {/*<i class='fas fa-search'></i>*/}
+            <SearchAppBar />
             <i class='far fa-bell'></i>
             <Link to='/login' className='login-link'>
               {button && !isloginned && (
