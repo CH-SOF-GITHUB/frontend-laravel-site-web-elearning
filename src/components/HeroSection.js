@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React, { useEffect, useState } from "react";
 import { Button } from "./Button";
 import "../css/HeroSection.css";
@@ -30,7 +31,7 @@ function HeroSection(props) {
 
   return (
     <div className="hero-container">
-      <img src="/images/banner1.png" />
+      <img src="/images/banner1.png" className="hero-container-img" />
       <h1>The Only Place for Programming Hustlers!</h1>
       {isLoggedIn ? (
         <p className="p-5">You are already logged in! Explore our features.</p>

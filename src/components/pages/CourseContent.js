@@ -287,16 +287,7 @@ export default function CourseContent() {
                 style={{ alignItems: "center", alignContent: "center" }}
               >
                 Utilisateur
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-person-fill"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                </svg>{" "}
+                {" "}
                 :
               </label>
               <input
@@ -315,17 +306,7 @@ export default function CourseContent() {
                 style={{ alignItems: "center", alignContent: "center" }}
               >
                 Commentaire
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  className="bi bi-chat-left-dots"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                  <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
-                </svg>{" "}
+                {" "}
                 :
               </label>
               <textarea
@@ -340,19 +321,18 @@ export default function CourseContent() {
             <button
               type="submit"
               className="icon-link"
-              style={{ maxWidth: "100px" }}
+              style={{ maxWidth: "50px", Height: "100px"  }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
+                width="26"
+                height="26"
                 fill="currentColor"
                 class="bi bi-send"
                 viewBox="0 0 16 16"
               >
                 <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
               </svg>
-              Envoi
             </button>
           </form>
         </div>

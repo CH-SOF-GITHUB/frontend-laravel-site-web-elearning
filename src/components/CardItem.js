@@ -1,7 +1,6 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React from 'react'
 import { Link } from 'react-router-dom'
-//import { GiDuration } from "react-icons/gi";
-//import { MdOutlinePriceChange } from "react-icons/md";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock, faEuroSign } from '@fortawesome/free-solid-svg-icons'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'

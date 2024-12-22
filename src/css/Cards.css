@@ -153,11 +153,12 @@
 
 
 /* For All Courses */
-
 .carddeck {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap:25px;
+  justify-content: center;
 }
 
 .carddeck .cards__item {

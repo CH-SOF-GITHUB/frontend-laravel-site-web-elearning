@@ -1,10 +1,9 @@
 import '../css/Cards.css'
-import Carousel from 'react-multi-carousel'
-import 'react-multi-carousel/lib/styles.css'
 import React, { useEffect, useState } from 'react'
 import { fetchCourses } from '../services/coursesservice'
 import CourseItem from './CourseItem'
 import { BsFillCollectionFill } from "react-icons/bs";
+import CourseReviewCard from './CourseItem';
 
 function AllCoursesCards () {
   const [courseData, setCourseData] = useState([])
@@ -31,11 +30,12 @@ function AllCoursesCards () {
       <br></br>
       <div className='carddeck'>
         {courseData.map((course, index) => (
-          <CourseItem
+          <CourseReviewCard
             key={index}
             description={course.description}
             label={course.title}
             src={course.photo}
+            created_at={course.created_at}
             path={'/course_content/' + course.id}
           />
         ))}
