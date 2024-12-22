@@ -167,22 +167,33 @@
 
 .course-meta div {
   font-size: 1.5rem;
+  display: flex;
+  align-items: center; /* Aligne le texte et l'icône sur la même ligne */
+  gap: 10px; /* Ajoute un espacement entre l'icône et le texte */
 }
 
 .course-duration,
 .course-price {
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
-.course-duration {
+.course-duration p {
   color: #2d9cdb;
-  /* Blue color for the duration */
+  margin: 0; /* Supprime les marges par défaut */
 }
 
-.course-price {
+.course-price p {
+  margin: 0; /* Supprime les marges par défaut */
   color: #e67e22;
-  /* Orange color for the price */
+}
+
+/* Style de la barre de progression */
+.course-register {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  margin: 0;
 }
 
 .icon {
@@ -206,10 +217,11 @@
   font-weight: bold;
   color: #333;
 }
-
+/*
 .comments-list {
   margin-top: 15px;
 }
+  */
 /*
 .comment-card {
   background-color: #fff;
@@ -401,15 +413,4 @@ textarea:focus {
   height: 100vh;
   font-size: 1.2rem;
   color: #555;
-}
-
-/* Style de la barre de progression */
-.course-register {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-}
-
-.course-register a {
-  margin-left: 25px;
 }

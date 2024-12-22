@@ -1,5 +1,12 @@
-import React from "react";
-import { Avatar } from "antd";
+import React, { createElement, useState } from "react";
+import { Comment, Avatar, Tooltip } from "antd";
+import "antd/dist/antd.css";
+import {
+  LikeOutlined,
+  DislikeFilled,
+  DislikeOutlined,
+  LikeFilled
+} from "@ant-design/icons";
 // Inline styles for better design
 const styles = {
   commentContent: {
@@ -11,33 +18,63 @@ const styles = {
   }
 };
 
-const Comment = ({ comment, onReply }) => {
+const CommentBlock = ({ comment, onReply }) => {
+  // To maintain Like state
+  const [likesCount, setLikesCount] = useState(0);
+  // To maintain Dislike state
+  const [dislikesCount, setDislikesCount] = useState(0);
+  // To maintain action state
+  const [action, setAction] = useState(null);
+
   // Ensure replies is an array
   const replies = comment.replies || [];
 
   return (
-    <div className="comment-card">
-      <p className="comment-avatar">{comment.author[0]}</p>
-      <div style={styles.commentContent}>
-        <h4 style={styles.authorName}>{comment.author}</h4>
-        <p>{comment.text}</p>
-      </div>
-      {replies.length > 0 && (
-        <ul>
-          {replies.map((reply) => (
-            <li key={reply.id}>
-              <Comment
-                comment={reply}
-                onReply={onReply}
-                className="reply-comment"
-              />
-            </li>
-          ))}
-        </ul>
-      )}
-      <button onClick={() => onReply(comment.id)}>Reply</button>
+    <div style={{display: "block"}} key={comment.id}>
+      <Comment
+        author={<a>{comment.author}</a>}
+        avatar={
+          <Avatar style={{ backgroundColor: "green" }}>
+            {comment.author[0]}
+          </Avatar>
+        }
+        content={<p>{comment.text}</p>}
+        actions={[
+          <Tooltip title="Like">
+            <span
+              onClick={() => {
+                setLikesCount(1);
+                setDislikesCount(0);
+                setAction("liked");
+              }}
+            >
+              {createElement(action === "liked" ? LikeFilled : LikeOutlined)}
+              {likesCount}
+            </span>
+          </Tooltip>,
+          <Tooltip title="Dislike">
+            <span
+              onClick={() => {
+                setLikesCount(0);
+                setDislikesCount(1);
+                setAction("disliked");
+              }}
+            >
+              {React.createElement(
+                action === "disliked" ? DislikeFilled : DislikeOutlined
+              )}
+              {dislikesCount}
+            </span>
+          </Tooltip>
+        ]}
+        datetime={
+          comment.created_at
+            ? new Date(comment.created_at).toLocaleDateString()
+            : "Date non disponible"
+        }
+      />
     </div>
   );
 };
 
-export default Comment;
+export default CommentBlock;

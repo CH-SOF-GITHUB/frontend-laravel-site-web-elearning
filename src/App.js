@@ -17,15 +17,17 @@ import CourseVideo from './components/instructor/pages/CourseVideo'
 import QnA from './components/QnA';
 import './App.css';
 import InstructorDashboard from './components/instructor/pages/InstructorDashboard'
+import { DialogsProvider } from '@toolpad/core'
+import EnrollCourse from './components/pages/EnrollCourse'
 
 
 
 const App = () => {
   return (
+    <DialogsProvider>
     <div className='App'>
       <Router>
-        <Navbar />
-        
+        <Navbar />     
         <Routes>
           <Route path='/' exact element={<Home />}/>
           <Route path='/courses' element={<Courses />} />
@@ -34,7 +36,7 @@ const App = () => {
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
           <Route path='/myaccount' element={<MyAccount />} />
-
+          <Route path='/courses/enroll/:id' element={<EnrollCourse />} />
           
           {/* Instructor Routes */}
           {/*<Route path='/instructor/dashboard' element={<MyCourses />} />*/}
@@ -49,9 +51,8 @@ const App = () => {
 
         <Footer />
       </Router>
-      
-
     </div>
+    </DialogsProvider>
   );
 }
 

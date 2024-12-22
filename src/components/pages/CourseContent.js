@@ -1,40 +1,16 @@
-import React, { useEffect, createElement, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-//import { Comment, Avatar, Tooltip } from "antd";
-//import "antd/dist/antd.css";
-/*
-import {
-  LikeOutlined,
-  DislikeFilled,
-  DislikeOutlined,
-  LikeFilled
-} from "@ant-design/icons";
- */
-import { CommentSection } from "react-comments-section";
-import "react-comments-section/dist/index.css";
 import "../../css/CourseContent.css";
 import { fetchCourseById } from "../../services/coursesservice";
-// Importation des icônes
-import {
-  FaRegClock,
-  FaEuroSign,
-  FaRegCommentDots,
-  GiArchiveRegister
-} from "react-icons/fa";
-
 import { fetchCommentsByCourse } from "../../services/commentsservice";
-import Comment from "../Comment";
 import { toast } from "react-toastify";
+import CommentBlock from "../Comment";
+import { useDialogs } from "@toolpad/core";
 
 export default function CourseContent() {
+  const dialogs = useDialogs();
   // Récupère l'ID du cours depuis l'URL
   const { id } = useParams();
-  // To maintain Like state
-  // const [likesCount, setLikesCount] = useState(0);
-  // To maintain Dislike state
-  // const [dislikesCount, setDislikesCount] = useState(0);
-  // To maintain action state
-  // const [action, setAction] = useState(null);
   // Stocke les données du cours
   const [course, setCourse] = useState(null);
   // Stocke les commentaires
@@ -115,10 +91,6 @@ export default function CourseContent() {
       fetchCommentsCourse();
     }
   }, [isloginned, id]);
-  /* Affichage conditionnel selon l'état de connexion
-  if (!isloginned) {
-    return <p>Veuillez vous connecter pour accéder au contenu du cours.</p>;
-  }*/
 
   // Gestion de l'ajout d'un commentaire [Handle adding a new comment]
   const handleAddComment = (event) => {
@@ -187,6 +159,27 @@ export default function CourseContent() {
     });
     setComments(updatedComments);
   };
+
+  // handle dialog save course
+  const handleCourseDialog = async() => {
+      /*const id = await dialogs.prompt('Enter the ID to delete', {
+        okText: 'Delete',
+        cancelText: 'Cancel',
+      });*/     
+      if (id) {
+        const enrollConfirmed = await dialogs.confirm(
+          `Are you sure you want to enroll Course N° : ${id} ?`,
+        );
+        if (enrollConfirmed) {
+          try {
+           window.location.replace(`/courses/enroll/${id}`);
+          } catch (error) {
+            alert(error.message);
+          }
+        }
+    };
+    
+  }
   // Affichage du spinner si le cours est en cours de chargement
   if (!course) {
     return (
@@ -208,15 +201,37 @@ export default function CourseContent() {
       {/* durée de course et le prix */}
       <div className="course-meta">
         <div className="course-duration">
-          <FaRegClock className="icon" /> : {course.duration} heures
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            fill="currentColor"
+            className="bi bi-hourglass-bottom"
+            viewBox="0 0 16 16"
+          >
+            <path d="M2 1.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1h-11a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1-.5-.5m2.5.5v1a3.5 3.5 0 0 0 1.989 3.158c.533.256 1.011.791 1.011 1.491v.702s.18.149.5.149.5-.15.5-.15v-.7c0-.701.478-1.236 1.011-1.492A3.5 3.5 0 0 0 11.5 3V2z" />
+          </svg>{" "}
+          <p>{course.duration} heures</p>
         </div>
         <div className="course-price">
-          <FaEuroSign className="icon" /> :{" "}
-          {course.price ? `${course.price} €` : "Prix non disponible"}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            fill="currentColor"
+            className="bi bi-tags"
+            viewBox="0 0 16 16"
+          >
+            <path d="M3 2v4.586l7 7L14.586 9l-7-7zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586z" />
+            <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1z" />
+          </svg>
+          <p>{course.price ? `${course.price} €` : "Prix non disponible"}</p>
         </div>
         <div className="course-register">
           <i class="fas fa-file-invoice-dollar"></i>
-          <a href="#">S'inscrire à ce cours</a>
+          <button type="button" onClick={handleCourseDialog} className="btn btn-link">
+            S'inscrire à ce cours
+          </button>
         </div>
       </div>
       {/* Vidéo YouTube */}
@@ -234,9 +249,19 @@ export default function CourseContent() {
       {/* Section des commentaires */}
       <div className="nav-tab-info">
         <h3>
-          <FaRegCommentDots /> commentaires:{" "}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            fill="currentColor"
+            className="bi bi-chat-left-dots"
+            viewBox="0 0 16 16"
+          >
+            <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+            <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+          </svg>{" "}
+          commentaires:{" "}
         </h3>
-        {/*<h2>Commentaires:</h2>*/}
         <div className="comments-list">
           {comments.length === 0 ? (
             <p>
@@ -246,7 +271,7 @@ export default function CourseContent() {
           ) : (
             <div>
               {comments.map((comment) => (
-                <Comment
+                <CommentBlock
                   key={comment.id}
                   comment={comment}
                   onReply={(reply) => handleReply(comment.id, reply)}
@@ -254,19 +279,81 @@ export default function CourseContent() {
               ))}
             </div>
           )}
-          <form onSubmit={handleAddComment} className="comment-form">
-            <input
-              type="text"
-              value={author}
-              onChange={(event) => setAuthor(event.target.value)}
-              placeholder="Author"
-            />
-            <textarea
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              placeholder="Comment"
-            />
-            <button type="submit" className="comment-form-btn">envoyer</button>
+          <form onSubmit={handleAddComment}>
+            <div className="mb-0">
+              <label
+                for="author"
+                className="form-label"
+                style={{ alignItems: "center", alignContent: "center" }}
+              >
+                Utilisateur
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-person-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                </svg>{" "}
+                :
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="author"
+                value={author}
+                onChange={(event) => setAuthor(event.target.value)}
+                style={{ maxWidth: "500px" }}
+              />
+            </div>
+            <div className="mb-0">
+              <label
+                for="content"
+                className="form-label"
+                style={{ alignItems: "center", alignContent: "center" }}
+              >
+                Commentaire
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-chat-left-dots"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                  <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                </svg>{" "}
+                :
+              </label>
+              <textarea
+                className="form-control"
+                id="content"
+                rows="3"
+                value={content}
+                onChange={(event) => setContent(event.target.value)}
+                style={{ maxWidth: "500px" }}
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              className="icon-link"
+              style={{ maxWidth: "100px" }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-send"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+              </svg>
+              Envoi
+            </button>
           </form>
         </div>
       </div>
