@@ -1,65 +1,144 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   TextField,
   Typography,
-  MenuItem,
   Button,
   Box,
   Snackbar,
   Alert,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  InputAdornment,
+  MenuItem
 } from "@mui/material";
 import { useParams } from "react-router-dom";
-
+import { fetchCourseById } from "../../services/coursesservice";
+import { AccountCircle, LibraryBooks, AttachMoney } from "@mui/icons-material";
+import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import SubtitlesIcon from "@mui/icons-material/Subtitles";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import { fetchLanguageMedium } from "../../services/languagemediumservice";
 const EnrollCourse = () => {
   const { id } = useParams();
-  const [firstname, setFirstName] = useState("");
-  const [lastname, setLastName] = useState("");
+  // Data formations for Carousel
+  const [fullname, setFullName] = useState("");
+  const [phone, setPhone] = useState(null);
   const [email, setEmail] = useState("");
   const [course, setCourse] = useState("");
+  const [price, setPrice] = useState("");
+  const [languages, setLanguages] = useState([]);
+  const [language, setLanguage] = useState("");
+  const [promoCode, setPromoCode] = useState("");
   const [comment, setComment] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  // SNACKBAR for success/error messages
   const [snackbar, setSnackbar] = useState({
     open: false,
     type: "",
     message: ""
   });
+  // Form validation errors
   const [errors, setErrors] = useState({
-    firstname: "",
-    lastname: "",
+    fullname: "",
+    phone: "",
     email: "",
     course: "",
+    price: "",
     isChecked: ""
   });
 
-  const courses = [
-    { value: "react_basics", label: "React Basics" },
-    { value: "advanced_js", label: "Advanced JavaScript" },
-    { value: "web_dev_bootcamp", label: "Web Development Bootcamp" }
-  ];
+  // Fetching data from API
+  // Récupération des données du cours
+  const fetchCourseData = async () => {
+    try {
+      // Remplacez par votre API
+      const response = await fetchCourseById(id);
+      setCourse(response.data.course);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des données du cours :",
+        error
+      );
+    }
+  };
 
+  // Récupération des données de languges du cour
+  const fetchLanguageData = async () => {
+    try {
+      const response = await fetchLanguageMedium();
+      console.log(response.data.languages); // Accédez à 'languages' au lieu de 'data'
+      setLanguages(response.data.languages); // Mettez à jour l'état avec les langues
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des données de languges du cour :",
+        error
+      );
+    }
+  };
+
+  // validate token
+  const user = JSON.parse(localStorage.getItem("user-info"));
+
+  const validateToken = async () => {
+    if (user) {
+      // Extract the token creation timestamp and expiration time
+      const tokenIssuedAt =
+        Math.floor(Date.now() / 1000) - (3600 - user.expires_in); // Approximate iat calculation
+      const tokenExpiryTime = tokenIssuedAt + user.expires_in;
+      const currentTime = Math.round(Date.now() / 1000);
+
+      if (currentTime > tokenExpiryTime) {
+        localStorage.removeItem("user-info");
+        alert("Session expired. Please log in again.");
+        window.location.replace("/login"); // Redirect to login page
+      } else {
+        // Token is valid, proceed to load courses
+        await fetchCourseData();
+      }
+    }
+  };
+
+  useEffect(() => {
+    validateToken();
+  }, []);
+
+  useEffect(() => {
+    fetchCourseData();
+  }, [id]);
+
+  useEffect(() => {
+    fetchLanguageData();
+  }, []);
+
+  // Debugging: Log comments whenever they change
+  useEffect(() => {
+    console.log("Loaded languages:", languages);
+  }, [languages]);
+
+  // Handle form submission
   const handleSubmit = (e) => {
+    // Check if the form is submitted
     e.preventDefault();
-
     // Clear previous errors
     setErrors({
-      firstname: "",
-      lastname: "",
+      fullname: "",
+      phone: "",
       email: "",
       course: "",
+      price: "",
       isChecked: ""
     });
 
     let newErrors = {};
 
     // Validate fields
-    if (!firstname) {
-      newErrors.firstname = "First name is required";
+    if (!fullname) {
+      newErrors.fullname = "Full name is required";
     }
-    if (!lastname) {
-      newErrors.lastname = "Last name is required";
+    if (!phone) {
+      newErrors.phone = "Phone is required";
     }
     if (!email) {
       newErrors.email = "Email is required";
@@ -68,6 +147,9 @@ const EnrollCourse = () => {
     }
     if (!course) {
       newErrors.course = "Course selection is required";
+    }
+    if (!price) {
+      newErrors.price = "Price selection is required";
     }
 
     if (!isChecked) {
@@ -78,7 +160,7 @@ const EnrollCourse = () => {
 
     // If no errors, simulate API call and display success message
     if (Object.keys(newErrors).length === 0) {
-      const enrollData = { firstname, lastname, email, course, comment };
+      const enrollData = { fullname, phone, email, course, comment };
       console.log(enrollData);
 
       setSnackbar({
@@ -88,12 +170,32 @@ const EnrollCourse = () => {
       });
 
       // Reset form
-      setFirstName("");
-      setLastName("");
+      setFullName("");
+      setPhone("");
       setEmail("");
       setCourse("");
+      setPrice("");
       setComment("");
       setIsChecked(false); // Reset checkbox
+      /*
+      fetch("http://localhost:8000/api/enrollments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          fullname,
+          phone,
+          email,
+          formation_id: course,
+          language_id: language,
+          price,
+          promo_code: promoCode,
+          comment
+        }),
+      });
+      */
     }
     /*else if (!firstname & !lastname & !email & !course & !isChecked) {
       setSnackbar({
@@ -104,6 +206,7 @@ const EnrollCourse = () => {
     }*/
   };
 
+  // handle close Snackbar for success/error messages
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   return (
@@ -126,27 +229,57 @@ const EnrollCourse = () => {
       >
         {/* First Name Field */}
         <TextField
-          label="First Name"
-          variant="outlined"
-          value={firstname}
-          onChange={(e) => setFirstName(e.target.value)}
-          error={!!errors.firstname}
-          helperText={errors.firstname}
+          id="input-with-icon-textfield"
+          label="Full name"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              )
+            }
+          }}
+          variant="standard"
+          value={fullname}
+          onChange={(e) => setFullName(e.target.value)}
+          error={!!errors.fullname}
+          helperText={errors.fullname}
         />
-        {/* Last Name Field */}
+        {/* Telephone Field */}
         <TextField
-          label="Last Name"
-          variant="outlined"
-          value={lastname}
-          onChange={(e) => setLastName(e.target.value)}
-          error={!!errors.lastname}
-          helperText={errors.lastname}
+          id="input-with-icon-textfield"
+          label="Telephone"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <ContactPhoneIcon />
+                </InputAdornment>
+              )
+            }
+          }}
+          variant="standard"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          error={!!errors.phone}
+          helperText={errors.phone}
         />
         {/* Email Field */}
         <TextField
+          id="input-with-icon-textfield"
           label="Email"
-          variant="outlined"
           type="email"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AlternateEmailIcon />
+                </InputAdornment>
+              )
+            }
+          }}
+          variant="standard"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           error={!!errors.email}
@@ -154,24 +287,88 @@ const EnrollCourse = () => {
         />
         {/* Course Selection */}
         <TextField
-          select
-          label="Select a Course"
-          value={course}
-          onChange={(e) => setCourse(e.target.value)}
-          variant="outlined"
-          error={!!errors.course}
-          helperText={errors.course}
-        >
-          {courses.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
+          disabled
+          id="outlined-disabled"
+          label="Course"
+          value={course.title}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LibraryBooks />
+                </InputAdornment>
+              )
+            }
+          }}
+        />
+
+        {/* Price Field */}
+        <TextField
+          disabled
+          id="outlined-disabled"
+          label="Price"
+          value={course.price}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AttachMoney />
+                </InputAdornment>
+              )
+            }
+          }}
+        />
+        {/* Language Field */}
+        {languages.length === 0 ? (
+          <Typography variant="body2" color="textSecondary">
+            Loading languages...
+          </Typography>
+        ) : (
+          <TextField
+            select
+            label="Choose the language option"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            variant="outlined"
+          >
+            {languages.map((option) => (
+              <MenuItem key={option.id} value={option.id}>
+                {option.language_name}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+        {/* Code promo Field */}
+        <TextField
+          id="input-with-icon-textfield"
+          label="Promo Code (Optional)"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SubtitlesIcon />
+                </InputAdornment>
+              )
+            }
+          }}
+          variant="standard"
+          value={promoCode}
+          onChange={(e) => setPromoCode(e.target.value)}
+        />
         {/* Comment Field */}
         <TextField
+          id="input-with-icon-textfield"
           label="Comments (Optional)"
-          variant="outlined"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <ChatBubbleOutlineIcon />
+                </InputAdornment>
+              )
+            }
+          }}
+          variant="standard"
           multiline
           rows={4}
           value={comment}
