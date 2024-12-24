@@ -358,7 +358,7 @@ const EnrollCourse = () => {
         {/* start date selection*/}
         <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={['DatePicker']}>
-        <DatePicker label="Basic date picker" />
+        <DatePicker label="choose your date to start" />
       </DemoContainer>
     </LocalizationProvider>
         {/* Code promo Field */}

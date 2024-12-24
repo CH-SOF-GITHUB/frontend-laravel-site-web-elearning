@@ -5,15 +5,14 @@ import {
   Container,
   Typography,
   Card,
-  CardContent,
-  Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  AccordionActions
+  CardMedia,
+  Box,
+  Chip,
+  Button
 } from "@mui/material";
+import InfoRounded from "@mui/icons-material/InfoRounded";
 import { fetchEnrolledCourses } from "../../../services/coursesservice";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { BorderAll } from "@mui/icons-material";
 
 const MyCourses = () => {
   const [enrolls, setEnrolls] = useState([]);
@@ -23,29 +22,26 @@ const MyCourses = () => {
     try {
       const response = await fetchEnrolledCourses();
       setEnrolls(response.data.enrollments);
-      console.log("Enrolls: ", enrolls);
     } catch (error) {
       console.error("Erreur lors de la récupération des enrolls :", error);
     }
   };
-  // validate token
+
   const user = JSON.parse(localStorage.getItem("user-info"));
 
   const validateToken = async () => {
     if (user) {
-      // Extract the token creation timestamp and expiration time
       const tokenIssuedAt =
-        Math.floor(Date.now() / 1000) - (3600 - user.expires_in); // Approximate iat calculation
+        Math.floor(Date.now() / 1000) - (3600 - user.expires_in);
       const tokenExpiryTime = tokenIssuedAt + user.expires_in;
       const currentTime = Math.round(Date.now() / 1000);
 
       if (currentTime > tokenExpiryTime) {
         localStorage.removeItem("user-info");
         alert("Session expired. Please log in again.");
-        window.location.replace("/login"); // Redirect to login page
+        window.location.replace("/login");
         setLoading(true);
       } else {
-        // Token is valid, proceed to load courses
         await fetchEnrolls();
         setLoading(false);
       }
@@ -54,10 +50,6 @@ const MyCourses = () => {
 
   useEffect(() => {
     validateToken();
-  }, []);
-
-  useEffect(() => {
-    fetchEnrolls();
   }, []);
 
   if (loading) {
@@ -69,7 +61,7 @@ const MyCourses = () => {
   }
 
   return (
-    <Container maxWidth="md" style={{ marginTop: "2rem" }}>
+    <Container maxWidth="lg" style={{ marginTop: "2rem", marginBottom: "2rem" }}>
       <Typography variant="h4" gutterBottom align="center">
         My Courses
       </Typography>
@@ -78,53 +70,80 @@ const MyCourses = () => {
           You have not enrolled in any courses yet.
         </Typography>
       ) : (
-        <div container spacing={3}>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "16px", // Space between cards
+            justifyContent: "space-between"
+          }}
+        >
           {enrolls.map((enroll) => (
-            <div
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              style={{ marginTop: "10px", marginBottom: "30px" }}
+            <Card
+              variant="outlined"
+              sx={{
+                p: 2,
+                display: "flex",
+                alignItems: "center",
+                zIndex: 1,
+                width: { xs: "100%", sm: "calc(33.333% - 16px)" }
+              }}
               key={enroll.id}
             >
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">{enroll.formation.title}</Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {enroll.formation.description}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    style={{ marginTop: "0.5rem" }}
-                  >
-                    Price: ${enroll.formation.price}
-                  </Typography>
-                </CardContent>
-                <Accordion defaultExpanded>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel3-content"
-                    id="panel3-header"
-                  >
-                    <Typography component="span">Payment Actions</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography component="p">
-                      Veuillez confirmer vos actions de paiement ci-dessous.
-                      Vous pouvez soit annuler l'opération si nécessaire, soit
-                      valider le paiement pour poursuivre le processus.
-                    </Typography>
-                  </AccordionDetails>
-                  <AccordionActions>
-                    <Button color="secondary">Cancel</Button>
-                    <Button color="primary" variant="contained">
-                      Agree
-                    </Button>
-                  </AccordionActions>
-                </Accordion>
-              </Card>
-            </div>
+              <CardMedia
+                component="img"
+                width="100"
+                height="100"
+                alt={`${enroll.formation.title} cover`}
+                src={enroll.formation.photo || "/images/default-course.png"}
+                sx={{
+                  borderRadius: "6px",
+                  width: { xs: "100%", sm: 100 }
+                }}
+              />
+              <Box sx={{ ml: 2, flex: 1 }}>
+                <Typography
+                  gutterBottom
+                  sx={{
+                    whiteSpace: "normal", // Allow text to wrap
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    fontSize: 12
+                  }}
+                >
+                  {enroll.formation.title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ marginBottom: 1, fontWeight: "bold", fontSize: "20px" }}
+                >
+                  €{enroll.formation.price}
+                </Typography>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  icon={<InfoRounded />}
+                  label={enroll.status === "draft" ? "Brouillon" : "Validé"}
+                  sx={{
+                    fontSize: 16,
+                    color: "orange", // Text color is orange
+                    borderColor: "orange", // Border color is also orange
+                    borderRadius: "16px", // Border radius for Chip
+                    ".MuiChip-icon": { fontSize: 16, color: "orange" }, // Icon color is orange
+                    marginRight: "10px" // Adds space between the Chip and the Button
+                  }}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  style={{borderRadius:"15px", fontSize:"10px"}}
+                  onClick={() => alert("Proceed to Payment")}
+                >
+                  Pay Now
+                </Button>
+              </Box>
+            </Card>
           ))}
         </div>
       )}
