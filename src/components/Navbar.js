@@ -1,87 +1,64 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Button } from './Button'
-import '../css/Navbar.css'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import SearchAppBar from './Search'
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Button,
+  Box,
+  Container
+} from "@mui/material";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import HomeIcon from "@mui/icons-material/Home";
+import BookIcon from "@mui/icons-material/Book";
+import BlogIcon from "@mui/icons-material/RssFeed";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchAppBar from "./Search";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function Navbar () {
-  const [click, setClick] = useState(false)
-  const [button, setButton] = useState(true)
-  const [isloginned, setLoginStatus] = useState(false)
-  const [user, setUser] = useState(null)
-  const navigate = useNavigate()
+function Navbar() {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isloginned, setLoginStatus] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  const handleClick = () => setClick(!click)
-  const closeMobileMenu = () => setClick(false)
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  //
-  const showButton = () => {
-    if (window.innerWidth <= 960) {
-      setButton(false)
-    } else {
-      setButton(true)
-    }
-  }
-  //
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const checkLogin = () => {
-    const storedUser = JSON.parse(localStorage.getItem('user-info'))
+    const storedUser = JSON.parse(localStorage.getItem("user-info"));
     if (storedUser) {
-      const current = Math.round(Date.now() / 1000)
+      const current = Math.round(Date.now() / 1000);
       const tokenIssuedAt =
-        Math.floor(Date.now() / 1000) - (3600 - storedUser.expires_in)
-      const tokenExpiryTime = tokenIssuedAt + storedUser.expires_in
+        Math.floor(Date.now() / 1000) - (3600 - storedUser.expires_in);
+      const tokenExpiryTime = tokenIssuedAt + storedUser.expires_in;
 
       if (current > tokenExpiryTime) {
-        setLoginStatus(false)
-        localStorage.removeItem('user-info')
-        setUser(null)
+        setLoginStatus(false);
+        localStorage.removeItem("user-info");
+        setUser(null);
       } else {
-        setLoginStatus(true)
-        setUser(storedUser)
+        setLoginStatus(true);
+        setUser(storedUser);
       }
     } else {
-      setLoginStatus(false)
-      setUser(null)
+      setLoginStatus(false);
+      setUser(null);
     }
-  }
+  };
 
   useEffect(() => {
-    checkLogin()
-  }, [])
-
-  // const [bookList, setBookList] = useState([]);
-
-  // const login = async () => {
-  //     let loginURL = "http://127.0.0.1:8000/api/login/";
-  //     const response = await axios.post(loginURL, { "username": "priyanshugupta", "password": "1234" });
-  //     console.log(response);
-  // }
-
-  /* When the user clicks on the button,toggle between hiding and showing the dropdown content */
-  const myFunction = () => {
-    document.getElementById('myDropdown').classList.toggle('show')
-  }
-
-  // Close the dropdown menu if the user clicks outside of it
-  window.onclick = function (event) {
-    if (
-      !event.target.matches('.circle') ||
-      event.target.parentNode.matches('.circle')
-    ) {
-      var dropdowns = document.getElementsByClassName('dropdown-content')
-      var i
-      for (i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i]
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show')
-        }
-      }
-    }
-  }
-
-  window.addEventListener('resize', showButton)
+    checkLogin();
+  }, []);
 
   const handleProtectedRoute = (event, path) => {
     event.preventDefault() // Empêche la navigation par défaut
@@ -100,94 +77,122 @@ function Navbar () {
 
   return (
     <>
-      <nav className='navbar'>
-        <div class='navbar-container'>
-          <div className='menu-icon' onClick={handleClick}>
-            <i className={click ? 'fas fa-times' : 'fas fa-bars'} />
-          </div>
-          <Link to='/' className='navbar-logo'>
-            LetsProgramify
-          </Link>
-          <ul className={click ? 'nav-menu active' : 'nav-menu'}>
-            <li className='nav-item'>
-              <Link to='/' className='nav-links' onClick={closeMobileMenu}>
-                {!button && <i class='fas fa-home'></i>}Home
-              </Link>
-            </li>
-            <li className='nav-item'>
-              <Link
-                className='nav-links'
-                onClick={event => handleProtectedRoute(event, '/courses')}
-                style={{ cursor: 'pointer' }}
-              >
-                {!button && <i class='fas fa-book'></i>}Courses
-              </Link>
-            </li>
-            <li className='nav-item'>
-              <Link to='/blog' className='nav-links' onClick={closeMobileMenu}>
-                {!button && <i class='fas fa-blog'></i>}Blog
-              </Link>
-            </li>
-          </ul>
-          <div class='nav-menu-right'>
-            {/*<i class='fas fa-search'></i>*/}
-            <SearchAppBar />
-            <i class='far fa-bell'></i>
-            <Link to='/login' className='login-link'>
-              {button && !isloginned && (
-                <Button buttonStyle='btn--secondary' to='/login'>
+      <AppBar position="static">
+        <Container maxWidth="xl"> {/* Utilisation de container-fluid */}
+          <Toolbar sx={{ justifyContent: "space-between", minWidth: "100%" }}>
+            {/* Conteneur pour le logo et les icônes de navigation */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Typography variant="h6">
+                <Link
+                  to="/"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  LetsProgramify
+                </Link>
+              </Typography>
+              <IconButton color="inherit" component={Link} to="/" sx={{fontSize:"15px"}}>
+                <HomeIcon /> Home
+              </IconButton>
+              {/* Lien vers Courses */}
+              <IconButton color="inherit" component={Link} onClick={event => handleProtectedRoute(event, '/courses')} sx={{fontSize:"15px"}}>
+                <BookIcon /> All Courses
+              </IconButton>
+              <IconButton color="inherit" component={Link} to="/blog" sx={{fontSize:"15px"}}>
+                <BlogIcon /> Blog
+              </IconButton>
+            </Box>
+            {/* Espace pour les autres éléments */}
+            <Box sx={{ flexGrow: 1 }} />
+            {isloginned ? (
+              <div style={{marginRight:"10px"}}>
+                <IconButton edge="end" color="inherit" onClick={handleMenuOpen}>
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  PaperProps={{
+                    style: {
+                      maxHeight: "300px", // Limite la hauteur du menu
+                      width: "200px" // Ajustez si nécessaire
+                    }
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate("/instructor/dashboard");
+                    }}
+                  >
+                    Student Infos
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate("/student/mycourses");
+                    }}
+                  >
+                    My Courses
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate("/myaccount");
+                    }}
+                  >
+                    My Account
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate("/logout");
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </div>
+            ) : (
+              <Box>
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  component={Link}
+                  to="/login"
+                  sx={{ marginRight: 1 }}
+                >
                   Login
                 </Button>
-              )}
-            </Link>
-            <Link to='/signup' className='signup-link'>
-              {button && !isloginned && <Button>Signup</Button>}
-            </Link>
-            <div class='dropdown'>
-              {isloginned && (
-                <button class='circle' onClick={myFunction}>
-                  {user.user.name[0]}
-                </button>
-              )}
-              {!isloginned && !button && (
-                <button class='circle' onClick={myFunction}>
-                  <i class='fas fa-user'></i>
-                </button>
-              )}
-              <div id='myDropdown' class='dropdown-content'>
-                {!isloginned && (
-                  <Link to='/login' className='login-link'>
-                    Login
-                  </Link>
-                )}
-                {!isloginned && (
-                  <Link to='/signup' className='login-link'>
-                    Sign Up
-                  </Link>
-                )}
-                {isloginned && (
-                  <Link to='/instructor/dashboard' className='student-information-link'>
-                    Student Infos <i class="fas fa-user-graduate"></i>
-                  </Link>
-                )}
-                {isloginned && (
-                  <Link to='/myaccount' className='my-account-link'>
-                    My account &nbsp;&nbsp;<i class="fas fa-user-alt"></i>
-                  </Link>
-                )}
-                {isloginned && (
-                  <Link to='/logout' className='logout-link'>
-                    Logout &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-sign-out-alt"></i>
-                  </Link>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  component={Link}
+                  to="/signup"
+                >
+                  Signup
+                </Button>
+              </Box>
+            )}
+            {/* Barre de recherche, notifications, login/logout */}
+            <SearchAppBar />
+            <IconButton color="inherit">
+              <NotificationsIcon />
+            </IconButton>
+          </Toolbar>
+        </Container>
+      </AppBar>
       <ToastContainer />
     </>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

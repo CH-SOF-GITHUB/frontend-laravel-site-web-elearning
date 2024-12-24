@@ -41,7 +41,7 @@ const App = () => {
           <Route path='/blog' element={<Blog />} />
 
           {/* Instructor Routes */}
-          {/*<Route path='/instructor/dashboard' element={<MyCourses />} />*/}
+          <Route path='/student/mycourses' element={<MyCourses />} />
           <Route path='/instructor/dashboard' element={<InstructorDashboard />} />
           <Route path='/instructor/create_course' element={<CreateCourse />} />
           <Route path='/instructor/course_videos' element={<CourseVideos />} />

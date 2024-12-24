@@ -20,6 +20,11 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import SubtitlesIcon from "@mui/icons-material/Subtitles";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { fetchLanguageMedium } from "../../services/languagemediumservice";
+// DatePicker is available
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 const EnrollCourse = () => {
   const { id } = useParams();
   // Data formations for Carousel
@@ -27,7 +32,7 @@ const EnrollCourse = () => {
   const [phone, setPhone] = useState(null);
   const [email, setEmail] = useState("");
   const [course, setCourse] = useState("");
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(null);
   const [languages, setLanguages] = useState([]);
   const [language, setLanguage] = useState("");
   const [promoCode, setPromoCode] = useState("");
@@ -46,6 +51,7 @@ const EnrollCourse = () => {
     email: "",
     course: "",
     price: "",
+    language: "",
     isChecked: ""
   });
 
@@ -104,6 +110,13 @@ const EnrollCourse = () => {
     validateToken();
   }, []);
 
+  // Synchronise "price" avec le prix du cours sélectionné
+  useEffect(() => {
+    if (course && course.price) {
+      setPrice(course.price);
+    }
+  }, [course]);
+
   useEffect(() => {
     fetchCourseData();
   }, [id]);
@@ -119,21 +132,20 @@ const EnrollCourse = () => {
 
   // Handle form submission
   const handleSubmit = (e) => {
-    // Check if the form is submitted
     e.preventDefault();
-    // Clear previous errors
     setErrors({
       fullname: "",
       phone: "",
       email: "",
       course: "",
       price: "",
+      language: "",
       isChecked: ""
     });
 
     let newErrors = {};
 
-    // Validate fields
+    // Validation des champs
     if (!fullname) {
       newErrors.fullname = "Full name is required";
     }
@@ -149,61 +161,64 @@ const EnrollCourse = () => {
       newErrors.course = "Course selection is required";
     }
     if (!price) {
-      newErrors.price = "Price selection is required";
+      newErrors.price = "Price is required";
     }
-
+    if (!language) {
+      newErrors.language = "Language selection is required";
+    }
     if (!isChecked) {
       newErrors.isChecked = "You must agree to the terms and conditions";
     }
 
     setErrors(newErrors);
 
-    // If no errors, simulate API call and display success message
+    // Soumettre les données si aucune erreur
     if (Object.keys(newErrors).length === 0) {
-      const enrollData = { fullname, phone, email, course, comment };
-      console.log(enrollData);
+      const enrollData = {
+        user_id: user.id,
+        fullname,
+        phone,
+        email,
+        formation_id: course,
+        language_id: language,
+        price, // Inclure la valeur correcte de "price"
+        promo_code: promoCode,
+        comment
+      };
 
-      setSnackbar({
-        open: true,
-        type: "success",
-        message: "You have successfully enrolled in the course!"
-      });
+       // CONFIG TOKENS
+      const token = user.access_token;
 
-      // Reset form
-      setFullName("");
-      setPhone("");
-      setEmail("");
-      setCourse("");
-      setPrice("");
-      setComment("");
-      setIsChecked(false); // Reset checkbox
-      /*
-      fetch("http://localhost:8000/api/enrollments", {
+      fetch(`http://localhost:8000/api/learning/user/courses/${id}/enroll`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({
-          user_id: userId,
-          fullname,
-          phone,
-          email,
-          formation_id: course,
-          language_id: language,
-          price,
-          promo_code: promoCode,
-          comment
-        }),
-      });
-      */
+        body: JSON.stringify(enrollData)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setSnackbar({
+            open: true,
+            type: "success",
+            message: "You have successfully enrolled in the course!"
+          });
+          // Réinitialiser le formulaire
+          setFullName("");
+          setPhone("");
+          setEmail("");
+          setCourse("");
+          setPrice("");
+          setLanguage("");
+          setComment("");
+          setIsChecked(false);
+        })
+        .catch((error) => console.error("Error:", error));
     }
-    /*else if (!firstname & !lastname & !email & !course & !isChecked) {
-      setSnackbar({
-        open: true,
-        type: "error",
-        message: "Please fill all required fields correctly!"
-      });
-    }*/
   };
 
   // handle close Snackbar for success/error messages
@@ -307,7 +322,7 @@ const EnrollCourse = () => {
           disabled
           id="outlined-disabled"
           label="Price"
-          value={course.price}
+          value={price}
           slotProps={{
             input: {
               startAdornment: (
@@ -330,6 +345,8 @@ const EnrollCourse = () => {
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
             variant="outlined"
+            error={!!errors.language}
+            helperText={errors.language}
           >
             {languages.map((option) => (
               <MenuItem key={option.id} value={option.id}>
@@ -338,6 +355,12 @@ const EnrollCourse = () => {
             ))}
           </TextField>
         )}
+        {/* start date selection*/}
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['DatePicker']}>
+        <DatePicker label="Basic date picker" />
+      </DemoContainer>
+    </LocalizationProvider>
         {/* Code promo Field */}
         <TextField
           id="input-with-icon-textfield"
