@@ -8,11 +8,12 @@ import {
   CardMedia,
   Box,
   Chip,
-  Button
+  Button,
+  Tooltip
 } from "@mui/material";
 import InfoRounded from "@mui/icons-material/InfoRounded";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { fetchEnrolledCourses } from "../../../services/coursesservice";
-import { BorderAll } from "@mui/icons-material";
 
 const MyCourses = () => {
   const [enrolls, setEnrolls] = useState([]);
@@ -61,7 +62,10 @@ const MyCourses = () => {
   }
 
   return (
-    <Container maxWidth="lg" style={{ marginTop: "2rem", marginBottom: "2rem" }}>
+    <Container
+      maxWidth="lg"
+      style={{ marginTop: "2rem", marginBottom: "2rem" }}
+    >
       <Typography variant="h4" gutterBottom align="center">
         My Courses
       </Typography>
@@ -133,11 +137,29 @@ const MyCourses = () => {
                     marginRight: "10px" // Adds space between the Chip and the Button
                   }}
                 />
+                {/* Start Date Section with Chip */}
+                <Chip
+                  icon={<CalendarTodayIcon />}
+                  label={`Start Date: ${enroll.start_date ? new Date(enroll.start_date).toLocaleDateString() : "Indisponible"}`}
+                  sx={{
+                    marginTop: 1,
+                    fontSize: 14,
+                    borderRadius: "16px", // Adding border radius
+                    backgroundColor: "#f0f0f0", // Light background for the chip
+                    borderColor: "#00796b", // Teal border color
+                    color: "#00796b", // Teal text color
+                    padding: "4px 8px" // Padding to make it look nice
+                  }}
+                />
                 <Button
                   variant="contained"
                   color="primary"
                   size="small"
-                  style={{borderRadius:"15px", fontSize:"10px"}}
+                  style={{
+                    borderRadius: "15px",
+                    fontSize: "10px",
+                    marginTop: "8px"
+                  }}
                   onClick={() => alert("Proceed to Payment")}
                 >
                   Pay Now

@@ -21,10 +21,15 @@ import SubtitlesIcon from "@mui/icons-material/Subtitles";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { fetchLanguageMedium } from "../../services/languagemediumservice";
 // DatePicker is available
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+const initialValues = {
+  startedAt: dayjs(),
+  endsAt: dayjs()
+};
 const EnrollCourse = () => {
   const { id } = useParams();
   // Data formations for Carousel
@@ -35,6 +40,8 @@ const EnrollCourse = () => {
   const [price, setPrice] = useState(null);
   const [languages, setLanguages] = useState([]);
   const [language, setLanguage] = useState("");
+  // start date state
+  const [formValues, setFormValues] = useState(initialValues);
   const [promoCode, setPromoCode] = useState("");
   const [comment, setComment] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -52,6 +59,7 @@ const EnrollCourse = () => {
     course: "",
     price: "",
     language: "",
+    startedAt: "",
     isChecked: ""
   });
 
@@ -82,6 +90,11 @@ const EnrollCourse = () => {
         error
       );
     }
+  };
+
+  const handleDateChange = (date, dateType) => {
+    const formatedDate = dayjs(date).format("MMMM DD, YYYY hh:mm A");
+    setFormValues({ ...formValues, [dateType]: formatedDate });
   };
 
   // validate token
@@ -140,6 +153,7 @@ const EnrollCourse = () => {
       course: "",
       price: "",
       language: "",
+      startedAt: "",
       isChecked: ""
     });
 
@@ -166,6 +180,9 @@ const EnrollCourse = () => {
     if (!language) {
       newErrors.language = "Language selection is required";
     }
+    if (!formValues.startedAt) {
+      newErrors.startedAt = "Start date is required";
+    }
     if (!isChecked) {
       newErrors.isChecked = "You must agree to the terms and conditions";
     }
@@ -174,6 +191,8 @@ const EnrollCourse = () => {
 
     // Soumettre les données si aucune erreur
     if (Object.keys(newErrors).length === 0) {
+      const formattedStartDate = dayjs(formValues.startedAt).format("YYYY-MM-DD HH:mm:ss");
+
       const enrollData = {
         user_id: user.id,
         fullname,
@@ -183,10 +202,11 @@ const EnrollCourse = () => {
         language_id: language,
         price, // Inclure la valeur correcte de "price"
         promo_code: promoCode,
-        comment
+        comment,
+        start_date: formattedStartDate
       };
 
-       // CONFIG TOKENS
+      // CONFIG TOKENS
       const token = user.access_token;
 
       fetch(`http://localhost:8000/api/learning/user/courses/${id}/enroll`, {
@@ -214,6 +234,8 @@ const EnrollCourse = () => {
           setCourse("");
           setPrice("");
           setLanguage("");
+          setFormValues("");
+          setPromoCode("");
           setComment("");
           setIsChecked(false);
         })
@@ -316,7 +338,6 @@ const EnrollCourse = () => {
             }
           }}
         />
-
         {/* Price Field */}
         <TextField
           disabled
@@ -357,10 +378,16 @@ const EnrollCourse = () => {
         )}
         {/* start date selection*/}
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DatePicker']}>
-        <DatePicker label="choose your date to start" />
-      </DemoContainer>
-    </LocalizationProvider>
+          <DateTimePicker
+            renderInput={(props) => <TextField {...props} />}
+            label="Start Date and Time"
+            value={formValues.startedAt}
+            onChange={(newValue) =>
+              setFormValues({ ...formValues, startedAt: newValue })
+            }
+            inputFormat="MM/DD/YYYY hh:mm A"
+          />
+        </LocalizationProvider>
         {/* Code promo Field */}
         <TextField
           id="input-with-icon-textfield"
@@ -413,7 +440,6 @@ const EnrollCourse = () => {
             {errors.isChecked}
           </Typography>
         )}
-
         {/* Submit Button */}
         <Button
           type="submit"
