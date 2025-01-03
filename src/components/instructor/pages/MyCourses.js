@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import InfoRounded from "@mui/icons-material/InfoRounded";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { fetchEnrolledCourses } from "../../../services/coursesservice";
+import { fetchEnrolledCourses, fetchEnrolledCoursesByUser } from "../../../services/coursesservice";
 import Checkout from "./Checkout";
 
 const MyCourses = () => {
@@ -20,7 +20,8 @@ const MyCourses = () => {
 
   const fetchEnrolls = async () => {
     try {
-      const response = await fetchEnrolledCourses();
+      const response = await fetchEnrolledCoursesByUser();
+      //const response = await fetchEnrolledCourses();
       setEnrolls(response.data.enrollments);
     } catch (error) {
       console.error("Erreur lors de la récupération des enrolls :", error);
