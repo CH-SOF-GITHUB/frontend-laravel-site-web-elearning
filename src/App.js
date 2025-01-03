@@ -20,7 +20,8 @@ import InstructorDashboard from './components/instructor/pages/InstructorDashboa
 import { DialogsProvider } from '@toolpad/core'
 import EnrollCourse from './components/pages/EnrollCourse'
 import Blog from './components/pages/Blog'
-
+import Success from './components/instructor/pages/Success'
+import Cancel from './components/instructor/pages/Cancel'
 
 
 const App = () => {
@@ -42,6 +43,8 @@ const App = () => {
 
           {/* Instructor Routes */}
           <Route path='/student/mycourses' element={<MyCourses />} />
+          <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
           <Route path='/instructor/dashboard' element={<InstructorDashboard />} />
           <Route path='/instructor/create_course' element={<CreateCourse />} />
           <Route path='/instructor/course_videos' element={<CourseVideos />} />

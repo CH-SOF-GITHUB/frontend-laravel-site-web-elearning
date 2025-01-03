@@ -7,13 +7,12 @@ import {
   Card,
   CardMedia,
   Box,
-  Chip,
-  Button,
-  Tooltip
+  Chip
 } from "@mui/material";
 import InfoRounded from "@mui/icons-material/InfoRounded";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { fetchEnrolledCourses } from "../../../services/coursesservice";
+import Checkout from "./Checkout";
 
 const MyCourses = () => {
   const [enrolls, setEnrolls] = useState([]);
@@ -151,19 +150,7 @@ const MyCourses = () => {
                     padding: "4px 8px" // Padding to make it look nice
                   }}
                 />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  style={{
-                    borderRadius: "15px",
-                    fontSize: "10px",
-                    marginTop: "8px"
-                  }}
-                  onClick={() => alert("Proceed to Payment")}
-                >
-                  Pay Now
-                </Button>
+                <Checkout enroll={enroll} />
               </Box>
             </Card>
           ))}
