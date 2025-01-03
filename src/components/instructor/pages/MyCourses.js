@@ -77,8 +77,7 @@ const MyCourses = () => {
           style={{
             display: "flex",
             flexWrap: "wrap",
-            gap: "16px", // Space between cards
-            justifyContent: "space-between"
+            gap: "16px"
           }}
         >
           {enrolls.map((enroll) => (
@@ -126,16 +125,20 @@ const MyCourses = () => {
                   size="small"
                   variant="outlined"
                   icon={<InfoRounded />}
-                  label={enroll.status === "draft" ? "Brouillon" : "Validé"}
+                  label={enroll.status === "draft" ? "brouillon" : "validé"}
                   sx={{
                     fontSize: 16,
-                    color: "orange", // Text color is orange
-                    borderColor: "orange", // Border color is also orange
-                    borderRadius: "16px", // Border radius for Chip
-                    ".MuiChip-icon": { fontSize: 16, color: "orange" }, // Icon color is orange
-                    marginRight: "10px" // Adds space between the Chip and the Button
+                    color: enroll.status === "draft" ? "orange" : "green", // Couleur du texte selon le statut
+                    borderColor: enroll.status === "draft" ? "orange" : "green", // Couleur de la bordure selon le statut
+                    borderRadius: "16px", // Border radius pour Chip
+                    ".MuiChip-icon": {
+                      fontSize: 16,
+                      color: enroll.status === "draft" ? "orange" : "green" // Couleur de l'icône selon le statut
+                    },
+                    marginRight: "10px" // Espace entre le Chip et le bouton
                   }}
                 />
+
                 {/* Start Date Section with Chip */}
                 <Chip
                   icon={<CalendarTodayIcon />}
@@ -146,7 +149,7 @@ const MyCourses = () => {
                     borderRadius: "16px", // Adding border radius
                     backgroundColor: "#f0f0f0", // Light background for the chip
                     borderColor: "#00796b", // Teal border color
-                    color: "#00796b", // Teal text color
+                    color: "black", // Teal text color
                     padding: "4px 8px" // Padding to make it look nice
                   }}
                 />

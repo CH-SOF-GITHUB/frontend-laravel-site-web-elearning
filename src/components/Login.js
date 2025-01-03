@@ -3,6 +3,14 @@ import { Button } from "./Button";
 import "../css/Login.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import du CSS de react-toastify
+import {
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 // import  { Redirect } from 'react-router-dom'
 // import { Link } from 'react-router-dom'
 // import { useHistory } from "react-router-dom"
@@ -10,6 +18,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   //let history = useHistory();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   useEffect(() => {
     validateToken();
@@ -84,6 +93,13 @@ const Login = () => {
         // alert(x.message);
       });
   }
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   return (
     <>
       <div class="container">
@@ -91,27 +107,47 @@ const Login = () => {
         <h1>Welcome Back</h1>
         <form action="" className="form-control">
           <div>
-            <label htmlFor="email">Email*</label>
-            <input
-              type="text"
-              className="form-control"
-              name="email"
-              onChange={(e) => setEmail(e.target.value)}
-              id="email"
-              placeholder="Enter Your Email"
-            />
+            <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
+              <label htmlFor="email">Email*</label>
+              <OutlinedInput
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                size="small"
+              />
+            </FormControl>
           </div>
 
           <div>
-            <label htmlFor="password">Password*</label>
-            <input
-              type="password"
-              class="form-control"
-              name="password"
-              onChange={(e) => setPassword(e.target.value)}
-              id="password"
-              placeholder="Enter Your Password"
-            />
+            <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
+              <label htmlFor="email">Password*</label>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                size="small"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      size="small"
+                    >
+                      {showPassword ? (
+                        <VisibilityOff fontSize="inherit" />
+                      ) : (
+                        <Visibility fontSize="inherit" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+            </FormControl>
           </div>
 
           <Button onClick={login} className="btn" type="button">

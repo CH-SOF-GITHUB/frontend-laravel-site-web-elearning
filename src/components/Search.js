@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
@@ -46,6 +46,21 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchAppBar() {
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const searchValue = e.target.value;
+    if (searchValue) {
+      window.find(searchValue);
+      //highlightText(searchValue);
+    }
+  };
+
+  const highlightText = (text) => {
+    const bodyText = document.body.innerHTML; // Obtenez le contenu HTML du corps
+    const highlightedText = bodyText.replace(new RegExp(`(${text})`, 'gi'), '<span style="background-color: yellow;">$1</span>'); // Remplacez le texte trouvé par un span avec un fond jaune
+    document.body.innerHTML = highlightedText; // Mettez à jour le contenu du corps
+  };
+
   return (
     <Search>
       <SearchIconWrapper>
@@ -54,6 +69,11 @@ export default function SearchAppBar() {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearch(e);
+          }
+        }}
       />
     </Search>
   );

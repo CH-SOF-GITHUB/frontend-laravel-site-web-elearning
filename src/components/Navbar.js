@@ -9,7 +9,8 @@ import {
   MenuItem,
   Button,
   Box,
-  Container
+  Container,
+  Avatar
 } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
@@ -61,24 +62,26 @@ function Navbar() {
   }, []);
 
   const handleProtectedRoute = (event, path) => {
-    event.preventDefault() // Empêche la navigation par défaut
+    event.preventDefault(); // Empêche la navigation par défaut
     if (!isloginned) {
-      toast.error('Vous devez être connecté pour accéder à cette page !', {
-        position: 'bottom-left',
+      toast.error("Vous devez être connecté pour accéder à cette page !", {
+        position: "bottom-left",
         autoClose: 5000,
         hideProgressBar: true,
         pauseOnHover: true,
         draggable: true
-      })
+      });
     } else {
-      navigate(path)
+      navigate(path);
     }
-  }
+  };
 
   return (
     <>
       <AppBar position="static">
-        <Container maxWidth="xl"> {/* Utilisation de container-fluid */}
+        <Container maxWidth="xl">
+          {" "}
+          {/* Utilisation de container-fluid */}
           <Toolbar sx={{ justifyContent: "space-between", minWidth: "100%" }}>
             {/* Conteneur pour le logo et les icônes de navigation */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -90,23 +93,42 @@ function Navbar() {
                   LetsProgramify
                 </Link>
               </Typography>
-              <IconButton color="inherit" component={Link} to="/" sx={{fontSize:"15px"}}>
+              <IconButton
+                color="inherit"
+                component={Link}
+                to="/"
+                sx={{ fontSize: "15px" }}
+              >
                 <HomeIcon /> Home
               </IconButton>
               {/* Lien vers Courses */}
-              <IconButton color="inherit" component={Link} onClick={event => handleProtectedRoute(event, '/courses')} sx={{fontSize:"15px"}}>
+              <IconButton
+                color="inherit"
+                component={Link}
+                onClick={(event) => handleProtectedRoute(event, "/courses")}
+                sx={{ fontSize: "15px" }}
+              >
                 <BookIcon /> All Courses
               </IconButton>
-              <IconButton color="inherit" component={Link} to="/blog" sx={{fontSize:"15px"}}>
+              <IconButton
+                color="inherit"
+                component={Link}
+                to="/blog"
+                sx={{ fontSize: "15px" }}
+              >
                 <BlogIcon /> Blog
               </IconButton>
             </Box>
             {/* Espace pour les autres éléments */}
             <Box sx={{ flexGrow: 1 }} />
             {isloginned ? (
-              <div style={{marginRight:"10px"}}>
+              <div style={{ marginRight: "10px" }}>
                 <IconButton edge="end" color="inherit" onClick={handleMenuOpen}>
-                  <AccountCircle />
+                  {/* <AccountCircle /> */}
+                  <Avatar
+                    sx={{ width: 35, height: 35 }}
+                    src="https://avatars.githubusercontent.com/u/19550456"
+                  ></Avatar>
                 </IconButton>
                 <Menu
                   anchorEl={anchorEl}
@@ -127,14 +149,14 @@ function Navbar() {
                     }
                   }}
                 >
-                  <MenuItem
+                  {/* <MenuItem
                     onClick={() => {
                       handleMenuClose();
                       navigate("/instructor/dashboard");
                     }}
                   >
                     Student Infos
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem
                     onClick={() => {
                       handleMenuClose();

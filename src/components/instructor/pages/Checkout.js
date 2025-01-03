@@ -83,7 +83,7 @@ const Checkout = ({ enroll }) => {
       onClick={handlePayment}
       disabled={!isTokenValid} // Désactive le bouton si le token est invalide
     >
-      Pay Now
+      Je Paye
     </Button>
   );
 };
