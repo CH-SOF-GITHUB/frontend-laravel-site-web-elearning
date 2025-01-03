@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "./Button";
-import "../css/Login.css";
+//import { Button } from "./Button";
+//import "../css/Login.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import du CSS de react-toastify
 import {
+  Box,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputAdornment,
   InputLabel,
+  Button,
+  Link,
   OutlinedInput
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -101,61 +106,93 @@ const Login = () => {
   };
 
   return (
-    <>
-      <div class="container">
-        <ToastContainer />
-        <h1>Welcome Back</h1>
-        <form action="" className="form-control">
-          <div>
-            <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
-              <label htmlFor="email">Email*</label>
-              <OutlinedInput
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                size="small"
+    <div class="container">
+      <ToastContainer />
+      <h1>Welcome Back</h1>
+      <form onSubmit={login} className="form-control">
+        <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
+          <label htmlFor="email">Email*</label>
+          <OutlinedInput
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            size="small"
+            label="Email"
+          />
+        </FormControl>
+        <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
+          <label htmlFor="email">Password*</label>
+          <OutlinedInput
+            id="outlined-adornment-password"
+            type={showPassword ? "text" : "password"}
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            size="small"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                  size="small"
+                >
+                  {showPassword ? (
+                    <VisibilityOff fontSize="inherit" />
+                  ) : (
+                    <Visibility fontSize="inherit" />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+          />
+        </FormControl>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="tandc"
+                value="true"
+                color="primary"
+                sx={{ padding: 0.5, "& .MuiSvgIcon-root": { fontSize: 20 } }}
               />
-            </FormControl>
-          </div>
-
-          <div>
-            <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
-              <label htmlFor="email">Password*</label>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                size="small"
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                      size="small"
-                    >
-                      {showPassword ? (
-                        <VisibilityOff fontSize="inherit" />
-                      ) : (
-                        <Visibility fontSize="inherit" />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-              />
-            </FormControl>
-          </div>
-
-          <Button onClick={login} className="btn" type="button">
+            }
+            slotProps={{
+              typography: {
+                fontSize: 14
+              }
+            }}
+            color="textSecondary"
+            label="I agree with the T&C"
+          />
+          <Link href="/" variant="body2">
+            Forgot password?
+          </Link>
+        </Box>
+        {/* <Button onClick={login} className="btn" type="button">
             Log In
-          </Button>
-        </form>
-      </div>
-    </>
+          </Button> */}
+        <Button
+          type="button"
+          variant="outlined"
+          color="info"
+          size="small"
+          disableElevation
+          fullWidth
+          sx={{ my: 2 }}
+          onClick={login}
+        >
+          Log In
+        </Button>
+      </form>
+      <Box sx={{ textAlign: "center" }}>
+        <Link href="/signup" variant="body2">
+          Sign up
+        </Link>
+      </Box>
+    </div>
   );
 };
 
