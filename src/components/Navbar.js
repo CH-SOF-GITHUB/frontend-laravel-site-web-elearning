@@ -62,7 +62,7 @@ function Navbar() {
   }, []);
 
   const handleProtectedRoute = (event, path) => {
-    event.preventDefault(); // Empêche la navigation par défaut
+    //event.preventDefault(); // Empêche la navigation par défaut
     if (!isloginned) {
       toast.error("Vous devez être connecté pour accéder à cette page !", {
         position: "bottom-left",
