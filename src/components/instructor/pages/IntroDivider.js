@@ -5,8 +5,10 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import Checkout from "./Checkout";
 
 export default function IntroDivider(props) {
+  const isValidated = props.enroll.status === "validated";
   return (
     <Card variant="outlined" sx={{ maxWidth: 360 }}>
       <Box sx={{ p: 2 }}>
@@ -31,7 +33,11 @@ export default function IntroDivider(props) {
           Statut:
         </Typography>
         <Stack direction="row" spacing={1}>
-          <Chip color="primary" label={props.enroll.status === "draft" ? "brouillon" : "validé"} size="small" />
+          <Chip
+            color="primary"
+            label={props.enroll.status === "draft" ? "brouillon" : "validé"}
+            size="small"
+          />
         </Stack>
       </Box>
       <Divider />
@@ -40,9 +46,18 @@ export default function IntroDivider(props) {
           Date de début:
         </Typography>
         <Stack direction="row" spacing={1}>
-          <Chip label={`Start Date: ${props.enroll.start_date ? new Date(props.enroll.start_date).toLocaleDateString() : "Indisponible"}`} size="small" />
+          <Chip
+            label={`Start Date: ${props.enroll.start_date ? new Date(props.enroll.start_date).toLocaleDateString() : "Indisponible"}`}
+            size="small"
+          />
         </Stack>
       </Box>
+      {!isValidated && (
+        <>
+          <Divider />
+          <Box sx={{ p: 1 }}><Checkout enroll={props.enroll} /></Box>
+        </>
+      )}
     </Card>
   );
 }
