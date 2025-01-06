@@ -24,9 +24,9 @@ const Signup = () => {
       return;
     }
 
-    // Reset error and enable loading
-    setError("");
-    //setLoading(true);
+    setError(""); // Réinitialise les erreurs
+    setAlertMessage(""); // Réinitialise l'alerte
+    setOpen(false);
 
     let item = {
       name,
@@ -45,35 +45,41 @@ const Signup = () => {
         body: JSON.stringify(item)
       });
 
-      let response = await result.json();
+      let rawResponse = await result.text(); // Récupère la réponse brute
+      let response;
+
+      try {
+        response = JSON.parse(rawResponse); // Convertit en objet JSON
+      } catch (error) {
+        console.error("Erreur lors du parsing JSON :", error);
+        response = null;
+      }
 
       if (result.ok) {
-        // alert("Vous avez été enregistré avec succès !");
-        // Définir le message de l'alerte et l'afficher
+        // Succès
         setAlertMessage(
           "Vous avez été enregistré avec succès ! Redirection en cours..."
         );
         setOpen(true);
-        // Redirection après un délai
         setTimeout(() => {
           window.location.replace("/login");
         }, 3000);
+      } else if (response && response.email) {
+        // Affiche les erreurs spécifiques de l'email
+        setAlertMessage(response.email.join(" "));
+        setOpen(true);
       } else {
-        setError(
-          response.password
-            ? response.password[0]
-            : "Vous avez été enregistré avec échec !"
-        );
-        setAlertMessage(response.data);
+        // Erreur générique
+        setAlertMessage("Une erreur est survenue. Veuillez réessayer.");
         setOpen(true);
       }
     } catch (error) {
-      console.error("Erreur lors de l'inscription :", error);
-      setError("Une erreur réseau est survenue. Veuillez réessayer plus tard.");
-      setAlertMessage(error.message || "Une erreur est survenue.");
+      // Erreur réseau
+      console.error("Erreur réseau :", error);
+      setAlertMessage(
+        "Une erreur réseau est survenue. Veuillez réessayer plus tard."
+      );
       setOpen(true);
-    } finally {
-      //setLoading(false); // Disable loading
     }
   }
 
@@ -81,31 +87,35 @@ const Signup = () => {
     <>
       <div className="container">
         {/* Alerte avec MUI */}
-      <Collapse in={open}>
-        <Alert
-          severity={alertMessage.includes("réussie") ? "success" : "error"}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => setOpen(false)}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          /* sx={{ mb: 2 }} */
-          sx={{
-            position: "fixed",
-            top: "95%",
-            left: "0%",
-            transform: "translate(1%, -50%)",
-            zIndex: 10
-          }}
-        >
-          {alertMessage}
-        </Alert>
-      </Collapse>
+        <Collapse in={open}>
+          <Alert
+            severity={
+              alertMessage.includes("succès") ||
+              alertMessage.includes("réussie")
+                ? "success"
+                : "error"
+            }
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => setOpen(false)}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{
+              position: "fixed",
+              top: "95%",
+              left: "0%",
+              transform: "translate(1%, -50%)",
+              zIndex: 10
+            }}
+          >
+            {alertMessage}
+          </Alert>
+        </Collapse>
         <h1>Lets Get Started</h1>
         {error && (
           <div style={{ color: "red", marginTop: "10px" }}>{error}</div>
