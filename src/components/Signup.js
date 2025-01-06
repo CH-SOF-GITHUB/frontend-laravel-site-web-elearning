@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Button } from "./Button";
+//import { Button } from "./Button";
 import "../css/Signup.css";
+import { Alert, Button, Collapse, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -8,7 +10,9 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // State to track loading
+  //const [loading, setLoading] = useState(false); // State to track loading
+  const [open, setOpen] = useState(false); // État pour afficher ou masquer l'alerte
+  const [alertMessage, setAlertMessage] = useState(""); // Message de l'alerte
 
   async function signup() {
     if (!name || !email || !password || !confirmpassword) {
@@ -22,7 +26,7 @@ const Signup = () => {
 
     // Reset error and enable loading
     setError("");
-    setLoading(true);
+    //setLoading(true);
 
     let item = {
       name,
@@ -44,26 +48,64 @@ const Signup = () => {
       let response = await result.json();
 
       if (result.ok) {
-        alert("Vous avez été enregistré avec succès !");
-        window.location.replace("/login");
+        // alert("Vous avez été enregistré avec succès !");
+        // Définir le message de l'alerte et l'afficher
+        setAlertMessage(
+          "Vous avez été enregistré avec succès ! Redirection en cours..."
+        );
+        setOpen(true);
+        // Redirection après un délai
+        setTimeout(() => {
+          window.location.replace("/login");
+        }, 3000);
       } else {
         setError(
           response.password
             ? response.password[0]
             : "Vous avez été enregistré avec échec !"
         );
+        setAlertMessage(response.data);
+        setOpen(true);
       }
     } catch (error) {
       console.error("Erreur lors de l'inscription :", error);
       setError("Une erreur réseau est survenue. Veuillez réessayer plus tard.");
+      setAlertMessage(error.message || "Une erreur est survenue.");
+      setOpen(true);
     } finally {
-      setLoading(false); // Disable loading
+      //setLoading(false); // Disable loading
     }
   }
 
   return (
     <>
       <div className="container">
+        {/* Alerte avec MUI */}
+      <Collapse in={open}>
+        <Alert
+          severity={alertMessage.includes("réussie") ? "success" : "error"}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => setOpen(false)}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          /* sx={{ mb: 2 }} */
+          sx={{
+            position: "fixed",
+            top: "95%",
+            left: "0%",
+            transform: "translate(1%, -50%)",
+            zIndex: 10
+          }}
+        >
+          {alertMessage}
+        </Alert>
+      </Collapse>
         <h1>Lets Get Started</h1>
         {error && (
           <div style={{ color: "red", marginTop: "10px" }}>{error}</div>
@@ -79,7 +121,6 @@ const Signup = () => {
               id="name"
             />
           </div>
-
           <div>
             <label htmlFor="email">Email*</label>
             <input
@@ -90,7 +131,6 @@ const Signup = () => {
               id="email"
             />
           </div>
-
           <div>
             <label htmlFor="password">Password*</label>
             <input
@@ -101,7 +141,6 @@ const Signup = () => {
               id="password"
             />
           </div>
-
           <div>
             <label htmlFor="confirmpassword">Password Confirmation*</label>
             <input
@@ -112,14 +151,25 @@ const Signup = () => {
               id="confirmpassword"
             />
           </div>
-
-          <Button
+          {/* <Button
             onClick={signup}
             className="btn"
             type="button"
             disabled={loading}
           >
             {loading ? "Loading..." : "Register"}
+          </Button> */}
+          <Button
+            type="button"
+            variant="outlined"
+            color="info"
+            size="small"
+            disableElevation
+            fullWidth
+            sx={{ my: 2 }}
+            onClick={signup}
+          >
+            Sign Up
           </Button>
         </form>
       </div>

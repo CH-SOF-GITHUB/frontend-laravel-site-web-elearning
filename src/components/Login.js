@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-//import { Button } from "./Button";
-//import "../css/Login.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import du CSS de react-toastify
 import {
   Box,
   Checkbox,
@@ -10,29 +6,29 @@ import {
   FormControlLabel,
   IconButton,
   InputAdornment,
-  InputLabel,
+  OutlinedInput,
   Button,
   Link,
-  OutlinedInput
+  Collapse,
+  Alert
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-// import  { Redirect } from 'react-router-dom'
-// import { Link } from 'react-router-dom'
-// import { useHistory } from "react-router-dom"
+import CloseIcon from "@mui/icons-material/Close";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //let history = useHistory();
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [open, setOpen] = useState(false); // État pour afficher ou masquer l'alerte
+  const [alertMessage, setAlertMessage] = useState(""); // Message de l'alerte
 
   useEffect(() => {
     validateToken();
   }, []);
 
   async function validateToken() {
-    var user = JSON.parse(localStorage.getItem("user-info"));
+    const user = JSON.parse(localStorage.getItem("user-info"));
     if (user != null) {
-      // Extract the token creation timestamp and expiration time
       const tokenIssuedAt =
         Math.floor(Date.now() / 1000) - (3600 - user.expires_in); // Approximate iat calculation
       const tokenExpiryTime = tokenIssuedAt + user.expires_in;
@@ -48,68 +44,76 @@ const Login = () => {
   }
 
   async function login() {
-    //console.warn(email, password);
-    let item = { email, password };
-    let result;
-    fetch("http://localhost:8000/api/learning/login", {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      },
-      body: JSON.stringify(item)
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
-      })
-      .then((data) => {
-        result = data;
-        console.log(data);
-        localStorage.setItem("user-info", JSON.stringify(data));
-        // alert("Vous avez connecté avec succès !");
-        toast.success("Vous avez connecté avec succès !", {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: true,
-          pauseOnHover: true,
-          draggable: true
-        });
-        setTimeout(() => {
-          window.location.replace("/");
-        }, 3000);
-        // window.location.replace("/"); // Reload full page
-        //history.push('/');
-        //<Link to='/' className='login-link'></Link>   // will not reload full page just load the components on that path
-      })
-      .catch(async (err) => {
-        let x = await err.json();
-        console.log(x.message);
-        toast.error(x.message, {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: true,
-          pauseOnHover: true,
-          draggable: true
-        });
-        // alert(x.message);
+    const item = { email, password };
+
+    try {
+      const response = await fetch("http://localhost:8000/api/learning/login", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify(item)
       });
+
+      if (!response.ok) {
+        throw await response.json();
+      }
+
+      const data = await response.json();
+      localStorage.setItem("user-info", JSON.stringify(data));
+
+      // Définir le message de l'alerte et l'afficher
+      setAlertMessage("Connexion réussie ! Redirection en cours...");
+      setOpen(true);
+
+      // Redirection après un délai
+      setTimeout(() => {
+        window.location.replace("/");
+      }, 3000);
+    } catch (err) {
+      // Afficher un message d'erreur
+      setAlertMessage(err.message || "Une erreur est survenue.");
+      setOpen(true);
+    }
   }
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const handleMouseDownPassword = (event) => event.preventDefault();
 
   return (
-    <div class="container">
-      <ToastContainer />
+    <div className="container">
       <h1>Welcome Back</h1>
-      <form onSubmit={login} className="form-control">
+
+      {/* Alerte avec MUI */}
+      <Collapse in={open}>
+        <Alert
+          severity={alertMessage.includes("réussie") ? "success" : "error"}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => setOpen(false)}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          /* sx={{ mb: 2 }} */
+          sx={{
+            position: "fixed",
+            top: "95%",
+            left: "0%",
+            transform: "translate(1%, -50%)",
+            zIndex: 10
+          }}
+        >
+          {alertMessage}
+        </Alert>
+      </Collapse>
+
+      <form className="form-control">
         <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
           <label htmlFor="email">Email*</label>
           <OutlinedInput
@@ -121,7 +125,7 @@ const Login = () => {
           />
         </FormControl>
         <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
-          <label htmlFor="email">Password*</label>
+          <label htmlFor="password">Password*</label>
           <OutlinedInput
             id="outlined-adornment-password"
             type={showPassword ? "text" : "password"}
@@ -164,16 +168,12 @@ const Login = () => {
                 fontSize: 14
               }
             }}
-            color="textSecondary"
             label="I agree with the T&C"
           />
           <Link href="/" variant="body2">
             Forgot password?
           </Link>
         </Box>
-        {/* <Button onClick={login} className="btn" type="button">
-            Log In
-          </Button> */}
         <Button
           type="button"
           variant="outlined"
@@ -184,7 +184,7 @@ const Login = () => {
           sx={{ my: 2 }}
           onClick={login}
         >
-          Log In
+          Login
         </Button>
       </form>
       <Box sx={{ textAlign: "center" }}>
