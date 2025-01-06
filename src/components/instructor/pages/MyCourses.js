@@ -71,7 +71,7 @@ const MyCourses = () => {
       style={{ marginTop: "2rem", marginBottom: "2rem" }}
     >
       <Typography variant="h4" gutterBottom align="center">
-        My Courses
+          vous êtes inscrit au ces cours !
       </Typography>
       {enrolls.length === 0 ? (
         <Typography variant="body1" color="textSecondary" align="center">
