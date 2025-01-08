@@ -14,21 +14,22 @@ const Signup = () => {
   const [open, setOpen] = useState(false); // État pour afficher ou masquer l'alerte
   const [alertMessage, setAlertMessage] = useState(""); // Message de l'alerte
 
+  // function signup()
   async function signup() {
+    // Validation côté client
     if (!name || !email || !password || !confirmpassword) {
-      setError("Veuillez remplir tous les champs obligatoires.");
+      setAlertMessage("Veuillez remplir tous les champs obligatoires.");
+      setOpen(true);
       return;
     }
+
     if (password !== confirmpassword) {
-      setError("Les mots de passe ne correspondent pas.");
+      setAlertMessage("Les mots de passe ne correspondent pas.");
+      setOpen(true);
       return;
     }
 
-    setError(""); // Réinitialise les erreurs
-    setAlertMessage(""); // Réinitialise l'alerte
-    setOpen(false);
-
-    let item = {
+    const item = {
       name,
       email,
       password,
@@ -36,49 +37,48 @@ const Signup = () => {
     };
 
     try {
-      let result = await fetch("http://localhost:8000/api/learning/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
-        body: JSON.stringify(item)
-      });
+      const response = await fetch(
+        "http://localhost:8000/api/learning/register",
+        {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify(item)
+        }
+      );
 
-      let rawResponse = await result.text(); // Récupère la réponse brute
-      let response;
+      if (!response.ok) {
+        //const errorData = await response.json();
+        const rawResponse = await response.json();
+        const errorData = JSON.parse(rawResponse);
 
-      try {
-        response = JSON.parse(rawResponse); // Convertit en objet JSON
-      } catch (error) {
-        console.error("Erreur lors du parsing JSON :", error);
-        response = null;
+        // Vérifiez si l'erreur concerne l'email
+        if (errorData && errorData.email && Array.isArray(errorData.email)) {
+          const emailErrorMessage = errorData.email[0]; // Récupère le premier message
+          setAlertMessage("L'email est déjà existe !");
+          setOpen(true);
+          return;
+        }
       }
 
-      if (result.ok) {
-        // Succès
-        setAlertMessage(
-          "Vous avez été enregistré avec succès ! Redirection en cours..."
-        );
+      // Succès de l'inscription
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("register", JSON.stringify(data));
+
+        setAlertMessage("Inscription réussie ! Redirection en cours...");
         setOpen(true);
+
         setTimeout(() => {
           window.location.replace("/login");
         }, 3000);
-      } else if (response && response.email) {
-        // Affiche les erreurs spécifiques de l'email
-        setAlertMessage(response.email.join(" "));
-        setOpen(true);
-      } else {
-        // Erreur générique
-        setAlertMessage("Une erreur est survenue. Veuillez réessayer.");
-        setOpen(true);
       }
-    } catch (error) {
-      // Erreur réseau
-      console.error("Erreur réseau :", error);
-      setAlertMessage(
-        "Une erreur réseau est survenue. Veuillez réessayer plus tard."
-      );
+    } catch (err) {
+      // Gestion des erreurs réseau ou inattendues
+      setAlertMessage(err.message || "Une erreur est survenue.");
       setOpen(true);
     }
   }
@@ -107,9 +107,9 @@ const Signup = () => {
             }
             sx={{
               position: "fixed",
-              top: "95%",
-              left: "0%",
-              transform: "translate(1%, -50%)",
+              top: "59%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
               zIndex: 10
             }}
           >

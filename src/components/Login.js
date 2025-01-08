@@ -44,6 +44,19 @@ const Login = () => {
   }
 
   async function login() {
+    // Validation côté client
+    if (!email) {
+      setAlertMessage("Veuillez remplir correct email.");
+      setOpen(true);
+      return;
+    }
+
+    if (!password) {
+      setAlertMessage("Veuillez remplir correct mot de passe.");
+      setOpen(true);
+      return;
+    }
+
     const item = { email, password };
 
     try {
@@ -58,20 +71,30 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        throw await response.json();
+        const errorData = await response.json();
+        // const rawResponse = await response.json();
+        // Vérifiez si l'erreur concerne l'email
+        if (errorData && errorData.error) {
+          const ErrorMessage = errorData.error; // Récupère le premier message
+          setAlertMessage("Vérifier votre email ou mot de passe !");
+          setOpen(true);
+          return;
+        }
       }
 
-      const data = await response.json();
-      localStorage.setItem("user-info", JSON.stringify(data));
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("user-info", JSON.stringify(data));
 
-      // Définir le message de l'alerte et l'afficher
-      setAlertMessage("Connexion réussie ! Redirection en cours...");
-      setOpen(true);
+        // Définir le message de l'alerte et l'afficher
+        setAlertMessage("Connexion réussie ! Redirection en cours...");
+        setOpen(true);
 
-      // Redirection après un délai
-      setTimeout(() => {
-        window.location.replace("/");
-      }, 3000);
+        // Redirection après un délai
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 3000);
+      }
     } catch (err) {
       // Afficher un message d'erreur
       setAlertMessage(err.message || "Une erreur est survenue.");
@@ -103,9 +126,9 @@ const Login = () => {
           /* sx={{ mb: 2 }} */
           sx={{
             position: "fixed",
-            top: "95%",
-            left: "0%",
-            transform: "translate(1%, -50%)",
+            top: "59%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             zIndex: 10
           }}
         >

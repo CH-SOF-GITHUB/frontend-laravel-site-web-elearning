@@ -4,18 +4,18 @@ import "../../../css/creator/MyCourses.css";
 import {
   Container,
   Typography,
-  Card,
-  CardMedia,
-  Box,
-  Chip
+  //Card,
+  //CardMedia,
+  //Box,
+  //Chip
 } from "@mui/material";
-import InfoRounded from "@mui/icons-material/InfoRounded";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+//import InfoRounded from "@mui/icons-material/InfoRounded";
+//import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import {
-  fetchEnrolledCourses,
+  //fetchEnrolledCourses,
   fetchEnrolledCoursesByUser
 } from "../../../services/coursesservice";
-import Checkout from "./Checkout";
+//import Checkout from "./Checkout";
 import IntroDivider from "./IntroDivider";
 
 const MyCourses = () => {

@@ -15,7 +15,7 @@ video {
 }
 
 .hero-container {
-  /* background: url('/images/banner1.png') center center/cover no-repeat;  */
+  background: url('/public/images/banner1.png') center center/cover no-repeat;
   height: 70vh;
   width: 100%;
   display: flex;
@@ -28,10 +28,11 @@ video {
 
 .hero-container > h1 {
   color: #fff;
-  font-size: 70px;
+  font-size: 60px;
   margin-top: -20px;
   margin-left: 4rem;
 }
+
 
 .hero-container > p {
   margin-top: 8px;
