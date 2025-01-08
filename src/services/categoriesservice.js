@@ -1,11 +1,15 @@
-import axios from '../api/axios'
+import axios from "../api/axios";
 
-const CATEGORIE_API = 'categories'
+const CATEGORIE_API = "categories";
 
 export const fetchCategories = async () => {
-  return await axios.get(CATEGORIE_API)
-}
+  return await axios.get(CATEGORIE_API);
+};
 
 export const fetchCategorieById = async (id) => {
-  return await axios.get(`${CATEGORIE_API}/${id}`)
-}
+  return await axios.get(`${CATEGORIE_API}/${id}`);
+};
+
+export const fetchFormationsOfCatgoryById = async (id) => {
+  return await axios.get(`${CATEGORIE_API}/${id}/formations`);
+};

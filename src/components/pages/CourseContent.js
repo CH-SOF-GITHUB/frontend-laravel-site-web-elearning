@@ -240,10 +240,10 @@ export default function CourseContent() {
         </div>
       </div>
       {/* Vidéo YouTube */}
-      <div className="video-container">
+      <div style={{textAlign:"center"}}>
         <iframe
-          width="100%"
-          height="400"
+          width="50%"
+          height="300"
           src={`https://www.youtube.com/embed/${course.videoId}`}
           title="YouTube video player"
           frameBorder="0"

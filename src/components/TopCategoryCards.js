@@ -110,7 +110,7 @@ function TopCategoryCards (props) {
               description={category.category_description}
               label={category.category_name}
               photo={category.photo || 'https://via.placeholder.com/150'}
-              path={`categories/${category.id}`}
+              path={`/category_content/${category.id}`}
             />
           ))
         ) : (

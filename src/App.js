@@ -22,6 +22,7 @@ import EnrollCourse from './components/pages/EnrollCourse'
 import Blog from './components/pages/Blog'
 import Success from './components/instructor/pages/Success'
 import Cancel from './components/instructor/pages/Cancel'
+import CategoryContent from './components/CategoryContent'
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
           <Route path='/' exact element={<Home />}/>
           <Route path='/courses' element={<Courses />} />
           <Route path='/course_content/:id' element={<CourseContent/>} />
+          <Route path='/category_content/:id' element={<CategoryContent/>} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
